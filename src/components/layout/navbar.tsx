@@ -30,6 +30,12 @@ export function Navbar() {
             How it works
           </Link>
           <Link
+            href="/masjids"
+            className="text-sm text-secondary hover:text-white transition-colors"
+          >
+            Find a Masjid
+          </Link>
+          <Link
             href="#for-masjids"
             className="text-sm text-secondary hover:text-white transition-colors"
           >

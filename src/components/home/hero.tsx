@@ -45,7 +45,7 @@ export function Hero() {
               size="lg"
               className="bg-secondary text-primary hover:bg-secondary/90 font-semibold px-8"
             >
-              <Link href="#features">Find a Masjid</Link>
+              <Link href="/masjids">Find a Masjid</Link>
             </Button>
             <Button
               asChild

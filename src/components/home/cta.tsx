@@ -31,7 +31,7 @@ export function CtaSection() {
             size="lg"
             className="border-secondary/40 text-secondary bg-transparent hover:bg-accent hover:border-accent hover:text-white px-8"
           >
-            <Link href="#features">Explore Platform</Link>
+            <Link href="/masjids">Explore Masjids</Link>
           </Button>
         </FadeUp>
       </div>
