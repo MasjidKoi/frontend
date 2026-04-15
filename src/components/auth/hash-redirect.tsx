@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 /**
  * Detects GoTrue email callback hash fragments on any page (usually root /)
@@ -11,8 +10,6 @@ import { useRouter } from "next/navigation";
  * When redirect_to is not respected it falls back to GOTRUE_SITE_URL (/).
  */
 export function HashRedirect() {
-  const router = useRouter();
-
   useEffect(() => {
     if (typeof window === "undefined") return;
 
@@ -26,10 +23,10 @@ export function HashRedirect() {
     if (!accessToken) return;
 
     if (type === "invite") {
-      // Preserve the full hash so /invite/accept can read tokens
-      router.replace(`/invite/accept${hash}`);
+      // Use window.location — Next.js router.replace() strips hash fragments
+      window.location.href = `/invite/accept${hash}`;
     } else if (type === "recovery") {
-      router.replace(`/password/reset-confirm${hash}`);
+      window.location.href = `/password/reset-confirm${hash}`;
     }
   }, [router]);
 
