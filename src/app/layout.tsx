@@ -2,14 +2,11 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Inter } from "next/font/google";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import { AuthProvider } from "@/providers/auth-provider";
+import { Toaster } from "@/components/ui/sonner";
 
-/* Body font — Inter */
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans" });
-
-/* Heading font — Geist (same family, sharper for display) */
 const geistSans = Geist({ subsets: ["latin"], variable: "--font-heading" });
-
-/* Monospace — for prayer times, IDs, etc. */
 const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono" });
 
 export const metadata: Metadata = {
@@ -32,7 +29,12 @@ export default function RootLayout({
         "font-sans",
       )}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        <AuthProvider>
+          {children}
+          <Toaster richColors position="top-right" />
+        </AuthProvider>
+      </body>
     </html>
   );
 }

@@ -1,14 +1,16 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion, type Variants } from "framer-motion";
 import { ReactNode } from "react";
 
-const item = {
+const EASE = [0.21, 0.47, 0.32, 0.98] as const;
+
+const item: Variants = {
   hidden: { opacity: 0, y: 20 },
   show: (delay: number) => ({
     opacity: 1,
     y: 0,
-    transition: { duration: 0.6, delay, ease: [0.21, 0.47, 0.32, 0.98] },
+    transition: { duration: 0.6, delay, ease: EASE },
   }),
 };
 
@@ -18,7 +20,6 @@ interface HeroEntranceProps {
   className?: string;
 }
 
-/** Entrance animation for hero elements — fires on mount (not on scroll) */
 export function HeroEntrance({ children, delay = 0, className }: HeroEntranceProps) {
   return (
     <motion.div
@@ -33,7 +34,6 @@ export function HeroEntrance({ children, delay = 0, className }: HeroEntrancePro
   );
 }
 
-/** Slide-in from the right for the hero card */
 export function HeroCardEntrance({
   children,
   className,
@@ -45,7 +45,7 @@ export function HeroCardEntrance({
     <motion.div
       initial={{ opacity: 0, x: 48 }}
       animate={{ opacity: 1, x: 0 }}
-      transition={{ duration: 0.75, delay: 0.4, ease: [0.21, 0.47, 0.32, 0.98] }}
+      transition={{ duration: 0.75, delay: 0.4, ease: EASE }}
       className={className}
     >
       {children}
