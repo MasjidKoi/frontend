@@ -40,10 +40,11 @@ class ApiClientService {
       headers: { "Content-Type": "application/json" },
     });
 
-    // ── Request: attach Bearer token ──────────────────────────────────────
+    // ── Request: attach Bearer token (skip if already explicitly set) ────────
     ax.interceptors.request.use((cfg: InternalAxiosRequestConfig) => {
       const token = getAccessToken();
-      if (token) {
+      // Don't override if the caller passed an explicit Authorization header
+      if (token && !cfg.headers.Authorization) {
         cfg.headers.Authorization = `Bearer ${token}`;
       }
       return cfg;
