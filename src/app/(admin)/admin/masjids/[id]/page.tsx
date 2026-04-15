@@ -204,9 +204,7 @@ export default function MasjidDetailPage() {
     <div className="p-8 flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
-          <ArrowLeft className="h-4 w-4" /> Back to Masjids
-        </button>
+        <div className="w-40" />
         <h1 className="font-heading text-2xl font-bold text-foreground">{masjid.name}</h1>
         <Button
           onClick={handleSave}
