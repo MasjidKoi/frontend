@@ -5,24 +5,15 @@ import { UserPlus, Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { authApi } from "@/lib/api/auth";
+import { masjidsApi } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
-// GoTrue admin users list
-const SERVICE_NOTE = "User list comes from GoTrue admin API via backend.";
-
-interface GUser { id: string; email: string; app_metadata: { role?: string; masjid_id?: string }; created_at: string; }
-
-const ROLE_STYLES: Record<string, string> = {
-  platform_admin: "bg-primary text-white",
-  masjid_admin:   "bg-secondary text-primary",
-  madrasha_admin: "bg-[#FFF3CD] text-[#856404]",
-};
+interface Masjid { masjid_id: string; name: string; admin_region: string; }
 
 const inviteSchema = z.object({
   email: z.string().email("Valid email required"),
@@ -32,8 +23,7 @@ const inviteSchema = z.object({
 type InviteForm = z.infer<typeof inviteSchema>;
 
 export default function UsersPage() {
-  const [users, setUsers] = useState<GUser[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [masjids, setMasjids] = useState<Masjid[]>([]);
   const [inviteOpen, setInviteOpen] = useState(false);
 
   const { register, handleSubmit, watch, formState: { errors, isSubmitting }, reset } = useForm<InviteForm>({
@@ -42,26 +32,20 @@ export default function UsersPage() {
   });
   const role = watch("role");
 
-  const loadUsers = async () => {
-    setLoading(true);
-    try {
-      // Fetch directly from backend which calls GoTrue admin API
-      const resp = await fetch("http://localhost:9999/admin/users", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("mkoi_token") ?? ""}` },
-      });
-      // Fallback: try our API list
-    } catch { /* ignore */ } finally {
-      setLoading(false);
-    }
-    // Use audit log users as proxy since we don't have a users list API yet
-    setLoading(false);
-  };
-
-  useEffect(() => { loadUsers(); }, []);
+  // Load masjids for the dropdown
+  useEffect(() => {
+    masjidsApi.list({ page_size: 200 })
+      .then(d => setMasjids(d.items ?? []))
+      .catch(() => {});
+  }, []);
 
   const onInvite = async (data: InviteForm) => {
     try {
-      await authApi.inviteAdmin({ email: data.email, role: data.role, masjid_id: data.masjid_id || undefined });
+      await authApi.inviteAdmin({
+        email: data.email,
+        role: data.role,
+        masjid_id: data.role === "masjid_admin" ? data.masjid_id : undefined,
+      });
       toast.success(`Invite sent to ${data.email}`);
       setInviteOpen(false);
       reset();
@@ -83,13 +67,15 @@ export default function UsersPage() {
       </div>
 
       {/* Info card */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-8 text-center">
-        <Mail className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
-        <p className="font-semibold text-foreground mb-1">Manage users via invite</p>
-        <p className="text-sm text-muted-foreground mb-4">
-          User accounts are managed in GoTrue. Use the Invite Admin button to add new platform, masjid, or madrasha admins.
-        </p>
-        <Button onClick={() => setInviteOpen(true)} className="bg-primary hover:bg-primary/90 gap-2 mx-auto">
+      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-10 flex flex-col items-center text-center gap-4">
+        <Mail className="h-10 w-10 text-muted-foreground" />
+        <div>
+          <p className="font-semibold text-foreground mb-1">Manage users via invite</p>
+          <p className="text-sm text-muted-foreground max-w-sm">
+            User accounts are managed in GoTrue. Use the Invite Admin button to add new platform, masjid, or madrasha admins.
+          </p>
+        </div>
+        <Button onClick={() => setInviteOpen(true)} className="bg-primary hover:bg-primary/90 gap-2">
           <UserPlus className="h-4 w-4" /> Invite Admin
         </Button>
       </div>
@@ -99,33 +85,60 @@ export default function UsersPage() {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Invite Admin</DialogTitle>
-            <DialogDescription>An invite email will be sent. They set their password on first login.</DialogDescription>
+            <DialogDescription>An invite email will be sent via Brevo. They set their password on first login.</DialogDescription>
           </DialogHeader>
+
           <form onSubmit={handleSubmit(onInvite)} className="flex flex-col gap-4 mt-2">
+            {/* Email */}
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="inv-email">Email address *</Label>
-              <Input id="inv-email" type="email" placeholder="admin@example.com" {...register("email")} className={errors.email ? "border-destructive" : ""} />
+              <Input
+                id="inv-email"
+                type="email"
+                placeholder="admin@example.com"
+                {...register("email")}
+                className={errors.email ? "border-destructive" : ""}
+              />
               {errors.email && <p className="text-xs text-destructive">{errors.email.message}</p>}
             </div>
 
+            {/* Role */}
             <div className="flex flex-col gap-1.5">
               <Label>Role *</Label>
-              <select {...register("role")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none">
+              <select
+                {...register("role")}
+                className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+              >
                 <option value="masjid_admin">Masjid Admin</option>
                 <option value="madrasha_admin">Madrasha Admin</option>
                 <option value="platform_admin">Platform Admin</option>
               </select>
             </div>
 
+            {/* Masjid dropdown — only for masjid_admin */}
             {role === "masjid_admin" && (
               <div className="flex flex-col gap-1.5">
-                <Label htmlFor="inv-masjid">Masjid ID (UUID)</Label>
-                <Input id="inv-masjid" placeholder="Leave blank to assign later" {...register("masjid_id")} />
+                <Label htmlFor="inv-masjid">Assign to Masjid</Label>
+                <select
+                  id="inv-masjid"
+                  {...register("masjid_id")}
+                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+                >
+                  <option value="">— Select a masjid (optional) —</option>
+                  {masjids.map(m => (
+                    <option key={m.masjid_id} value={m.masjid_id}>
+                      {m.name} · {m.admin_region}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-muted-foreground">The masjid_id will be embedded in their JWT — they can only manage this masjid.</p>
               </div>
             )}
 
             <div className="flex gap-3 justify-end pt-2">
-              <Button type="button" variant="outline" onClick={() => { setInviteOpen(false); reset(); }}>Cancel</Button>
+              <Button type="button" variant="outline" onClick={() => { setInviteOpen(false); reset(); }}>
+                Cancel
+              </Button>
               <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 gap-2">
                 <UserPlus className="h-4 w-4" />
                 {isSubmitting ? "Sending…" : "Send Invite"}
