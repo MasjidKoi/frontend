@@ -12,6 +12,7 @@ export const ENDPOINTS = {
     passwordReset: "/auth/password/reset",
     adminInvite:   "/auth/admin/invite",
     factors:       "/auth/2fa/factors",
+    updatePassword: "/auth/user/password",
   },
 
   masjids: {

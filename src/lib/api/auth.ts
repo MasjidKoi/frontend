@@ -44,6 +44,18 @@ export const authApi = {
     return res.data;
   },
 
+  /**
+   * Set password for an invited user.
+   * Passes the invite token explicitly — does NOT use the stored session token.
+   */
+  async setPassword(password: string, inviteToken: string): Promise<void> {
+    await apiClient.get().put(
+      ENDPOINTS.auth.updatePassword,
+      { password },
+      { headers: { Authorization: `Bearer ${inviteToken}` } },
+    );
+  },
+
   /** Returns enrolled TOTP factors. Empty array = needs enrollment. */
   async listFactors(): Promise<{ id: string; status: string; friendly_name: string }[]> {
     const res = await apiClient.get().get<{ factors?: { id: string; status: string; friendly_name: string }[] }>(
