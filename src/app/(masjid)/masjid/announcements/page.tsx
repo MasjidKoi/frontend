@@ -39,12 +39,12 @@ function timeAgo(iso: string) {
 
 export default function AnnouncementsPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const id = user?.masjidId ?? "";
 
   useEffect(() => {
-    if (!user?.masjidId) router.push("/login");
-  }, [user?.masjidId, router]);
+    if (!authLoading && !user?.masjidId) router.push("/login");
+  }, [authLoading, user?.masjidId, router]);
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
   const [formOpen, setFormOpen] = useState(false);

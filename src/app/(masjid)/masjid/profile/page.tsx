@@ -42,7 +42,7 @@ type FormState = Partial<MasjidDetail> & { facilities?: Partial<Facilities>; con
 
 export default function MasjidProfilePage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const masjidId = user?.masjidId;
 
   const [masjid, setMasjid] = useState<MasjidDetail | null>(null);
@@ -51,9 +51,10 @@ export default function MasjidProfilePage() {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
 
+  // Wait for AuthProvider to hydrate before redirecting — prevents flash on refresh
   useEffect(() => {
-    if (!masjidId) { router.push("/login"); return; }
-  }, [masjidId, router]);
+    if (!authLoading && !masjidId) router.push("/login");
+  }, [authLoading, masjidId, router]);
 
   const load = useCallback(async () => {
     if (!masjidId) return;
@@ -101,7 +102,8 @@ export default function MasjidProfilePage() {
     finally { setSaving(false); }
   };
 
-  if (loading) return (
+  // While auth store hydrates from localStorage — show skeleton, not redirect
+  if (authLoading || loading) return (
     <div className="p-8 flex flex-col gap-6">
       <Skeleton className="h-8 w-64" />
       <div className="flex gap-5">

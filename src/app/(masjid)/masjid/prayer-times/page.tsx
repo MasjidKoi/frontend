@@ -47,12 +47,12 @@ const TIME_PATTERN = /^([01]\d|2[0-3]):[0-5]\d$/;
 
 export default function PrayerTimesPage() {
   const router = useRouter();
-  const { user } = useAuthStore();
+  const { user, isLoading: authLoading } = useAuthStore();
   const id = user?.masjidId ?? "";
 
   useEffect(() => {
-    if (!user?.masjidId) router.push("/login");
-  }, [user?.masjidId, router]);
+    if (!authLoading && !user?.masjidId) router.push("/login");
+  }, [authLoading, user?.masjidId, router]);
   const [entry, setEntry] = useState<PrayerEntry | null>(null);
   const [jumah, setJumah] = useState<JumahData | null>(null);
   const [azan, setAzan] = useState<Record<string, string>>({});
