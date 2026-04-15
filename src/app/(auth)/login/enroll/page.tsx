@@ -26,10 +26,23 @@ export default function EnrollPage() {
     authApi.enroll2fa().then((data) => {
       setEnrollment(data);
       sessionStorage.setItem("mkoi_factor_id", data.factor_id);
-    }).catch(() => {
+    }).catch(async () => {
+      // GoTrue rejects enrollment if a verified factor already exists
+      // Check if the user already has a factor and redirect to verify instead
+      try {
+        const factors = await authApi.listFactors();
+        const verified = factors.filter((f) => f.status === "verified");
+        if (verified.length > 0) {
+          sessionStorage.setItem("mkoi_factor_id", verified[0].id);
+          router.replace("/login/2fa");
+          return;
+        }
+      } catch {
+        // ignore
+      }
       toast.error("Failed to start 2FA enrollment — please try again");
     });
-  }, []);
+  }, [router]);
 
   const secretKey = enrollment?.totp_uri
     ? new URLSearchParams(enrollment.totp_uri.split("?")[1]).get("secret") ?? ""
