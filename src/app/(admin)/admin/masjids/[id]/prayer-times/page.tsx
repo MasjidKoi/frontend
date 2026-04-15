@@ -48,9 +48,11 @@ export default function PrayerTimesPage() {
   const { id } = useParams<{ id: string }>();
   const [entry, setEntry] = useState<PrayerEntry | null>(null);
   const [jumah, setJumah] = useState<JumahData | null>(null);
+  const [azan, setAzan] = useState<Record<string, string>>({});
   const [iqamah, setIqamah] = useState<Record<string, string>>({});
   const [jumahForm, setJumahForm] = useState<Record<string, string>>({});
   const [editingIqamah, setEditingIqamah] = useState<string | null>(null);
+  const [editingAzan, setEditingAzan] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
@@ -68,6 +70,13 @@ export default function PrayerTimesPage() {
       const pt = ptResp.dates?.[0] ?? null;
       setEntry(pt);
       if (pt) {
+        setAzan({
+          fajr: pt.fajr_azan ?? "",
+          dhuhr: pt.dhuhr_azan ?? "",
+          asr: pt.asr_azan ?? "",
+          maghrib: pt.maghrib_azan ?? "",
+          isha: pt.isha_azan ?? "",
+        });
         setIqamah({
           fajr: pt.fajr_iqamah ?? "",
           dhuhr: pt.dhuhr_iqamah ?? "",
@@ -114,9 +123,13 @@ export default function PrayerTimesPage() {
     try {
       const payload: Record<string, string> = { date: today };
       PRAYERS.forEach(p => {
-        const val = iqamah[p.key];
-        if (val && TIME_PATTERN.test(val)) {
-          payload[`${p.key}_iqamah`] = val;
+        const azanVal = azan[p.key];
+        if (azanVal && TIME_PATTERN.test(azanVal)) {
+          payload[`${p.key}_azan`] = azanVal;
+        }
+        const iqamahVal = iqamah[p.key];
+        if (iqamahVal && TIME_PATTERN.test(iqamahVal)) {
+          payload[`${p.key}_iqamah`] = iqamahVal;
         }
       });
       await prayerTimesApi.update(id, payload);
@@ -186,10 +199,12 @@ export default function PrayerTimesPage() {
       {entry ? (
         <div className="grid grid-cols-5 gap-4">
           {PRAYERS.map(({ key, label }, i) => {
-            const azanKey = `${key}_azan` as keyof PrayerEntry;
-            const azan = entry[azanKey] as string;
             const isFirst = i === 0;
-            const isEditing = editingIqamah === key;
+            const isEditingAzan = editingAzan === key;
+            const isEditingIqamah = editingIqamah === key;
+
+            const inputCls = `h-8 text-sm font-mono w-24 ${isFirst ? "bg-white/10 border-white/20 text-white placeholder:text-white/40" : ""}`;
+            const displayCls = `flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-mono transition-colors ${isFirst ? "bg-white/10 text-white hover:bg-white/20 w-full justify-between" : "bg-muted hover:bg-muted/70 text-foreground w-full justify-between border border-border/30"}`;
 
             return (
               <div
@@ -202,22 +217,44 @@ export default function PrayerTimesPage() {
                   {label}
                 </p>
 
+                {/* AZAN — editable */}
                 <div>
-                  <p className={`text-[10px] uppercase tracking-widest mb-1 ${isFirst ? "text-secondary/50" : "text-muted-foreground"}`}>Azan</p>
-                  <p className={`font-heading text-3xl font-bold font-mono ${isFirst ? "text-white" : "text-foreground"}`}>
-                    {azan}
-                  </p>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-secondary/50" : "text-muted-foreground"}`}>Azan</p>
+                  {isEditingAzan ? (
+                    <div className="flex items-center gap-1.5">
+                      <Input
+                        value={azan[key] ?? ""}
+                        onChange={e => { setAzan(p => ({ ...p, [key]: e.target.value })); setDirty(true); }}
+                        placeholder="HH:MM"
+                        className={inputCls}
+                        autoFocus
+                        onBlur={() => setEditingAzan(null)}
+                        onKeyDown={e => { if (e.key === "Enter") setEditingAzan(null); }}
+                      />
+                      <button onClick={() => setEditingAzan(null)} className={`shrink-0 ${isFirst ? "text-secondary/70" : "text-accent"}`}>
+                        <Check className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
+                  ) : (
+                    <button onClick={() => setEditingAzan(key)} className={displayCls}>
+                      <span className={`font-bold text-2xl ${isFirst ? "text-white" : "text-foreground"}`}>
+                        {azan[key] || "—"}
+                      </span>
+                      <Pencil className="h-3 w-3 opacity-60 shrink-0" />
+                    </button>
+                  )}
                 </div>
 
+                {/* IQAMAH — editable */}
                 <div>
                   <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-secondary/50" : "text-muted-foreground"}`}>Iqamah</p>
-                  {isEditing ? (
+                  {isEditingIqamah ? (
                     <div className="flex items-center gap-1.5">
                       <Input
                         value={iqamah[key] ?? ""}
                         onChange={e => { setIqamah(p => ({ ...p, [key]: e.target.value })); setDirty(true); }}
                         placeholder="HH:MM"
-                        className={`h-8 text-sm font-mono w-24 ${isFirst ? "bg-white/10 border-white/20 text-white placeholder:text-white/40" : ""}`}
+                        className={inputCls}
                         autoFocus
                         onBlur={() => setEditingIqamah(null)}
                         onKeyDown={e => { if (e.key === "Enter") setEditingIqamah(null); }}
@@ -227,16 +264,9 @@ export default function PrayerTimesPage() {
                       </button>
                     </div>
                   ) : (
-                    <button
-                      onClick={() => setEditingIqamah(key)}
-                      className={`flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-mono transition-colors ${
-                        isFirst
-                          ? "bg-white/10 text-white hover:bg-white/20 w-full justify-between"
-                          : "bg-muted hover:bg-muted/70 text-foreground w-full justify-between border border-border/30"
-                      }`}
-                    >
+                    <button onClick={() => setEditingIqamah(key)} className={displayCls}>
                       <span>{iqamah[key] || "—"}</span>
-                      <Pencil className="h-3 w-3 opacity-60" />
+                      <Pencil className="h-3 w-3 opacity-60 shrink-0" />
                     </button>
                   )}
                 </div>
