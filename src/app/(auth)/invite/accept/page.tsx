@@ -13,7 +13,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { authApi } from "@/lib/api/auth";
-import { useAuthStore } from "@/store/auth-store";
 
 const schema = z
   .object({
@@ -39,7 +38,6 @@ function parseHashTokens(hash: string): { accessToken: string; refreshToken: str
 
 function InviteAcceptInner() {
   const router = useRouter();
-  const { setTokens } = useAuthStore();
   const [state, setState] = useState<PageState>("loading");
   const [tokens, setHashTokens] = useState<{ accessToken: string; refreshToken: string } | null>(null);
   const [showPw, setShowPw] = useState(false);
@@ -69,19 +67,10 @@ function InviteAcceptInner() {
     try {
       await authApi.setPassword(password, tokens.accessToken);
 
-      // The invite token is a valid aal1 session — hydrate auth store
-      setTokens(tokens.accessToken, tokens.refreshToken);
-
-      // Check if user needs TOTP enrollment or just verify
-      const factors = await authApi.listFactors();
-      const verified = factors.filter((f) => f.status === "verified");
-
-      if (verified.length === 0) {
-        router.push("/login/enroll");
-      } else {
-        sessionStorage.setItem("mkoi_factor_id", verified[0].id);
-        router.push("/login/2fa");
-      }
+      // Password set — redirect to login so user signs in with new credentials
+      // TODO: re-enable TOTP enrollment redirect when 2FA is stable
+      toast.success("Password set! Please log in.");
+      router.push("/login");
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
