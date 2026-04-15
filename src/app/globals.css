@@ -48,39 +48,59 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ── MasjidKoi — Forest Sage palette ───────────────────────────────────────── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.148 0.004 228.8);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.148 0.004 228.8);
+  /* Surfaces */
+  --background: oklch(0.976 0.007 93);       /* #F5F3EE cream */
+  --foreground: oklch(0.218 0.046 155);       /* #1B3A28 dark forest green */
+  --card: oklch(1 0 0);                       /* #FFFFFF white */
+  --card-foreground: oklch(0.218 0.046 155);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.148 0.004 228.8);
-  --primary: oklch(0.218 0.008 223.9);
-  --primary-foreground: oklch(0.987 0.002 197.1);
-  --secondary: oklch(0.963 0.002 197.1);
-  --secondary-foreground: oklch(0.218 0.008 223.9);
-  --muted: oklch(0.963 0.002 197.1);
-  --muted-foreground: oklch(0.56 0.021 213.5);
-  --accent: oklch(0.963 0.002 197.1);
-  --accent-foreground: oklch(0.218 0.008 223.9);
+  --popover-foreground: oklch(0.218 0.046 155);
+
+  /* Primary — dark green (navbar, buttons, hero background) */
+  --primary: oklch(0.218 0.046 155);         /* #1B3A28 */
+  --primary-foreground: oklch(1 0 0);        /* white */
+
+  /* Secondary — light sage (stats bar, how-it-works bg, badges) */
+  --secondary: oklch(0.853 0.062 139);       /* #C8DBBC */
+  --secondary-foreground: oklch(0.218 0.046 155);
+
+  /* Muted */
+  --muted: oklch(0.976 0.007 93);            /* #F5F3EE same as bg */
+  --muted-foreground: oklch(0.582 0.054 152); /* #7A9A80 */
+
+  /* Accent — medium green */
+  --accent: oklch(0.342 0.063 155);          /* #2D5E3A */
+  --accent-foreground: oklch(1 0 0);
+
+  /* Destructive */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.925 0.005 214.3);
-  --input: oklch(0.925 0.005 214.3);
-  --ring: oklch(0.723 0.014 214.4);
-  --chart-1: oklch(0.872 0.007 219.6);
-  --chart-2: oklch(0.56 0.021 213.5);
-  --chart-3: oklch(0.45 0.017 213.2);
-  --chart-4: oklch(0.378 0.015 216);
-  --chart-5: oklch(0.275 0.011 216.9);
-  --radius: 0.625rem;
-  --sidebar: oklch(0.987 0.002 197.1);
-  --sidebar-foreground: oklch(0.148 0.004 228.8);
-  --sidebar-primary: oklch(0.218 0.008 223.9);
-  --sidebar-primary-foreground: oklch(0.987 0.002 197.1);
-  --sidebar-accent: oklch(0.963 0.002 197.1);
-  --sidebar-accent-foreground: oklch(0.218 0.008 223.9);
-  --sidebar-border: oklch(0.925 0.005 214.3);
-  --sidebar-ring: oklch(0.723 0.014 214.4);
+
+  /* Borders & inputs */
+  --border: oklch(0.878 0.020 93);           /* #E0D8CF warm grey */
+  --input: oklch(0.878 0.020 93);
+  --ring: oklch(0.342 0.063 155);            /* #2D5E3A */
+
+  /* Charts */
+  --chart-1: oklch(0.218 0.046 155);
+  --chart-2: oklch(0.342 0.063 155);
+  --chart-3: oklch(0.582 0.054 152);
+  --chart-4: oklch(0.853 0.062 139);
+  --chart-5: oklch(0.976 0.007 93);
+
+  /* Border radius — slightly rounder for a modern feel */
+  --radius: 0.5rem;
+
+  /* Sidebar — dark green theme */
+  --sidebar: oklch(0.218 0.046 155);         /* #1B3A28 */
+  --sidebar-foreground: oklch(1 0 0);
+  --sidebar-primary: oklch(0.342 0.063 155); /* #2D5E3A */
+  --sidebar-primary-foreground: oklch(1 0 0);
+  --sidebar-accent: oklch(0.270 0.052 155);  /* slightly lighter dark green */
+  --sidebar-accent-foreground: oklch(0.853 0.062 139);
+  --sidebar-border: oklch(0.270 0.052 155);
+  --sidebar-ring: oklch(0.342 0.063 155);
 }
 
 .dark {
