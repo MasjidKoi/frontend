@@ -6,6 +6,7 @@ import { ArrowLeft, BadgeCheck, Save, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   AlertDialog,
@@ -285,14 +286,12 @@ export default function MasjidDetailPage() {
             <div className="flex flex-col gap-3">
               {FACILITY_LABELS.map(({ key, label }) => (
                 <div key={key} className="flex items-center justify-between">
-                  <span className="text-sm text-foreground">{label}</span>
-                  <button
-                    type="button"
-                    onClick={() => setFacility(key, !(fac[key] as boolean))}
-                    className={`relative h-6 w-11 rounded-full transition-colors ${fac[key] ? "bg-accent" : "bg-border"}`}
-                  >
-                    <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-transform ${fac[key] ? "translate-x-5" : "translate-x-0.5"}`} />
-                  </button>
+                  <Label htmlFor={`fac-${key}`} className="text-sm font-normal cursor-pointer">{label}</Label>
+                  <Switch
+                    id={`fac-${key}`}
+                    checked={!!(fac[key] as boolean)}
+                    onCheckedChange={v => setFacility(key, v)}
+                  />
                 </div>
               ))}
             </div>

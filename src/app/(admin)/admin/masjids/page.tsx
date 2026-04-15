@@ -155,7 +155,7 @@ export default function MasjidsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => router.push(`/admin/masjids/${m.masjid_id}`)}
-                className="text-xs px-3 py-1.5 rounded-md bg-muted hover:bg-muted/80 text-muted-foreground transition-colors"
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors"
               >View</button>
               {!m.verified && m.status === "active" && (
                 <button
