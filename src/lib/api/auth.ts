@@ -43,4 +43,12 @@ export const authApi = {
     const res = await apiClient.get().post(ENDPOINTS.auth.adminInvite, data);
     return res.data;
   },
+
+  /** Returns enrolled TOTP factors. Empty array = needs enrollment. */
+  async listFactors(): Promise<{ id: string; status: string; friendly_name: string }[]> {
+    const res = await apiClient.get().get<{ factors?: { id: string; status: string; friendly_name: string }[] }>(
+      ENDPOINTS.auth.factors
+    );
+    return res.data?.factors ?? [];
+  },
 };
