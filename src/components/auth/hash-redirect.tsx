@@ -26,7 +26,8 @@ export function HashRedirect() {
       // Use window.location — Next.js router.replace() strips hash fragments
       window.location.href = `/invite/accept${hash}`;
     } else if (type === "recovery") {
-      window.location.href = `/password/reset-confirm${hash}`;
+      // For now recovery also goes to /invite/accept — same set-password flow
+      window.location.href = `/invite/accept${hash}`;
     }
   }, []);
 

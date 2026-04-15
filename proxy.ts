@@ -58,14 +58,12 @@ export function proxy(request: NextRequest) {
     const role = decoded.app_metadata?.role;
     const aal = decoded.aal ?? "aal1";
 
-    // ── Admin routes: must be platform_admin + aal2 ───────────────────────
+    // ── Admin routes: platform_admin only (aal1 accepted — TOTP disabled) ───
     if (isAdminRoute) {
       if (role !== "platform_admin") {
         return NextResponse.redirect(new URL("/login", request.url));
       }
-      if (aal !== "aal2") {
-        return NextResponse.redirect(new URL("/login/2fa", request.url));
-      }
+      // TODO: re-enable aal2 check: if (aal !== "aal2") redirect to /login/2fa
     }
 
     // ── Masjid routes: masjid_admin or platform_admin ─────────────────────

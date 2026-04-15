@@ -47,23 +47,10 @@ function LoginForm() {
         return;
       }
 
-      // Platform admins need 2FA — check if TOTP is enrolled first
-      if (user.role === "platform_admin" && user.aal === "aal1") {
-        const factors = await authApi.listFactors();
-        const verified = factors.filter((f) => f.status === "verified");
-
-        if (verified.length === 0) {
-          // No enrolled factor — go to enrollment
-          router.push("/login/enroll");
-        } else {
-          // Has a factor — store the first verified one, go to verify
-          sessionStorage.setItem("mkoi_factor_id", verified[0].id);
-          router.push("/login/2fa");
-        }
-        return;
-      }
-
-      router.push(getRedirectPath(user.role, user.aal));
+      // TODO: re-enable 2FA flow when TOTP is stable
+      // Platform admins go straight to /admin (aal1 accepted for now)
+      const dest = user.role === "platform_admin" ? "/admin" : "/masjid/profile";
+      router.push(dest);
     } catch (err: unknown) {
       const msg =
         (err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ??
