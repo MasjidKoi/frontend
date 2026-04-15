@@ -28,7 +28,7 @@ export function HashRedirect() {
     } else if (type === "recovery") {
       window.location.href = `/password/reset-confirm${hash}`;
     }
-  }, [router]);
+  }, []);
 
   return null;
 }
