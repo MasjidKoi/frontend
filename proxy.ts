@@ -32,9 +32,6 @@ function isExpired(payload: ParsedToken): boolean {
   return Date.now() >= payload.exp * 1000;
 }
 
-const ADMIN_ROUTES = ["/admin"];
-const MASJID_ROUTES = ["/masjid"];
-
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
@@ -42,8 +39,9 @@ export function proxy(request: NextRequest) {
   const decoded = tokenValue ? parseToken(tokenValue) : null;
   const isValidToken = decoded && !isExpired(decoded);
 
-  const isAdminRoute = ADMIN_ROUTES.some((r) => pathname.startsWith(r));
-  const isMasjidRoute = MASJID_ROUTES.some((r) => pathname.startsWith(r));
+  // Use exact prefix matching to avoid /masjids (public) being caught by /masjid
+  const isAdminRoute = pathname.startsWith("/admin");
+  const isMasjidRoute = pathname.startsWith("/masjid/") || pathname === "/masjid";
   const isProtected = isAdminRoute || isMasjidRoute;
 
   // ── Unauthenticated access to protected route → /login ──────────────────
@@ -71,8 +69,9 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // ── /login while already fully authenticated → redirect to dashboard ──
-    if (pathname === "/login" && aal === "aal2") {
+    // ── /login while already authenticated → redirect to dashboard ─────────
+    // Check any valid token (aal1 or aal2) since TOTP is currently disabled
+    if (pathname === "/login") {
       const dest = role === "platform_admin" ? "/admin" : "/masjid/profile";
       return NextResponse.redirect(new URL(dest, request.url));
     }

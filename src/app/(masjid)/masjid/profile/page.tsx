@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { BadgeCheck, Save } from "lucide-react";
+import { BadgeCheck, Save, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +38,24 @@ const FACILITY_LABELS: { key: keyof Facilities; label: string }[] = [
   { key: "has_school", label: "Islamic School" },
 ];
 
-type FormState = Partial<MasjidDetail> & { facilities?: Partial<Facilities>; contact?: Partial<Contact> };
+interface FormState {
+  name?: string;
+  address?: string;
+  admin_region?: string;
+  timezone?: string;
+  description?: string | null;
+  facilities?: Partial<Facilities>;
+  contact?: Partial<Contact>;
+}
+
+function Field({ label, value }: { label: string; value?: string | null }) {
+  return (
+    <div className="flex flex-col gap-0.5">
+      <p className="text-xs text-muted-foreground">{label}</p>
+      <p className="text-sm text-foreground">{value || <span className="text-muted-foreground/50">—</span>}</p>
+    </div>
+  );
+}
 
 export default function MasjidProfilePage() {
   const router = useRouter();
@@ -50,8 +67,8 @@ export default function MasjidProfilePage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
+  const [editing, setEditing] = useState(false);
 
-  // Wait for AuthProvider to hydrate before redirecting — prevents flash on refresh
   useEffect(() => {
     if (!authLoading && !masjidId) router.push("/login");
   }, [authLoading, masjidId, router]);
@@ -86,6 +103,18 @@ export default function MasjidProfilePage() {
     setDirty(true);
   };
 
+  const handleCancel = () => {
+    if (!masjid) return;
+    setForm({
+      name: masjid.name, address: masjid.address, admin_region: masjid.admin_region,
+      timezone: masjid.timezone, description: masjid.description,
+      facilities: { ...(masjid.facilities ?? {}) } as Partial<Facilities>,
+      contact: { ...(masjid.contact ?? {}) } as Partial<Contact>,
+    });
+    setDirty(false);
+    setEditing(false);
+  };
+
   const handleSave = async () => {
     if (!masjidId) return;
     setSaving(true);
@@ -97,19 +126,17 @@ export default function MasjidProfilePage() {
       });
       toast.success("Changes saved");
       setDirty(false);
+      setEditing(false);
       load();
     } catch { toast.error("Failed to save"); }
     finally { setSaving(false); }
   };
 
-  // While auth store hydrates from localStorage — show skeleton, not redirect
   if (authLoading || loading) return (
     <div className="p-8 flex flex-col gap-6">
       <Skeleton className="h-8 w-64" />
-      <div className="flex gap-5">
-        <div className="flex-1 flex flex-col gap-5"><Skeleton className="h-64" /><Skeleton className="h-80" /></div>
-        <div className="w-72"><Skeleton className="h-32" /></div>
-      </div>
+      <Skeleton className="h-56" />
+      <Skeleton className="h-72" />
     </div>
   );
 
@@ -117,6 +144,8 @@ export default function MasjidProfilePage() {
 
   const fac = (form.facilities ?? {}) as Partial<Facilities>;
   const con = (form.contact ?? {}) as Partial<Contact>;
+  const mFac = (masjid.facilities ?? {}) as Partial<Facilities>;
+  const mCon = (masjid.contact ?? {}) as Partial<Contact>;
 
   return (
     <div className="p-8 flex flex-col gap-6">
@@ -131,97 +160,173 @@ export default function MasjidProfilePage() {
             </div>
           )}
         </div>
-        <Button
-          onClick={handleSave}
-          disabled={!dirty || saving}
-          className="bg-primary hover:bg-primary/90 gap-2 disabled:opacity-40"
-        >
-          <Save className="h-4 w-4" />
-          {saving ? "Saving…" : "Save Changes"}
-        </Button>
+        {editing ? (
+          <div className="flex gap-2">
+            <Button variant="outline" onClick={handleCancel}>Cancel</Button>
+            <Button
+              onClick={handleSave}
+              disabled={!dirty || saving}
+              className="bg-primary hover:bg-primary/90 gap-2 disabled:opacity-40"
+            >
+              <Save className="h-4 w-4" />
+              {saving ? "Saving…" : "Save Changes"}
+            </Button>
+          </div>
+        ) : (
+          <Button variant="outline" onClick={() => setEditing(true)} className="gap-2">
+            <Pencil className="h-4 w-4" /> Edit Profile
+          </Button>
+        )}
       </div>
 
-      {/* Single column layout (no admin actions on right) */}
-      <div className="flex gap-5 items-start">
-        <div className="flex-1 flex flex-col gap-5">
-
-          {/* Basic Info */}
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
-            <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
-            <div className="flex flex-col gap-1.5">
-              <Label>Masjid Name</Label>
-              <Input value={form.name ?? ""} onChange={e => set("name", e.target.value)} />
-            </div>
-            <div className="flex flex-col gap-1.5">
-              <Label>Full Address</Label>
-              <Input value={form.address ?? ""} onChange={e => set("address", e.target.value)} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+      <div className="flex flex-col gap-5">
+        {editing ? (
+          /* ── EDIT MODE ── */
+          <>
+            {/* Basic Info — edit */}
+            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+              <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
               <div className="flex flex-col gap-1.5">
-                <Label>Admin Region</Label>
-                <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
+                <Label>Masjid Name</Label>
+                <Input value={form.name ?? ""} onChange={e => set("name", e.target.value)} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label>Timezone</Label>
-                <select value={form.timezone ?? "Asia/Dhaka"} onChange={e => set("timezone", e.target.value)}
-                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none">
-                  <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
-                  <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
-                  <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>
-                </select>
+                <Label>Full Address</Label>
+                <Input value={form.address ?? ""} onChange={e => set("address", e.target.value)} />
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <Label>Phone</Label>
-                <Input value={con.phone ?? ""} onChange={e => setContact("phone", e.target.value)} placeholder="+880..." />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Email</Label>
-                <Input type="email" value={con.email ?? ""} onChange={e => setContact("email", e.target.value)} placeholder="contact@masjid.com" />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="flex flex-col gap-1.5">
-                <Label>WhatsApp</Label>
-                <Input value={con.whatsapp ?? ""} onChange={e => setContact("whatsapp", e.target.value)} placeholder="+880..." />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Website</Label>
-                <Input value={con.website_url ?? ""} onChange={e => setContact("website_url", e.target.value)} placeholder="https://..." />
-              </div>
-            </div>
-          </div>
-
-          {/* Facilities */}
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
-            <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
-            <div className="flex flex-col gap-3">
-              {FACILITY_LABELS.map(({ key, label }) => (
-                <div key={key} className="flex items-center justify-between">
-                  <Label htmlFor={`fac-${key}`} className="text-sm font-normal cursor-pointer">{label}</Label>
-                  <Switch id={`fac-${key}`} checked={!!(fac[key] as boolean)} onCheckedChange={v => setFacility(key, v)} />
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label>Admin Region</Label>
+                  <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
                 </div>
-              ))}
+                <div className="flex flex-col gap-1.5">
+                  <Label>Timezone</Label>
+                  <select value={form.timezone ?? "Asia/Dhaka"} onChange={e => set("timezone", e.target.value)}
+                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none">
+                    <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
+                    <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
+                    <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>
+                  </select>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label>Phone</Label>
+                  <Input value={con.phone ?? ""} onChange={e => setContact("phone", e.target.value)} placeholder="+880..." />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Email</Label>
+                  <Input type="email" value={con.email ?? ""} onChange={e => setContact("email", e.target.value)} placeholder="contact@masjid.com" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex flex-col gap-1.5">
+                  <Label>WhatsApp</Label>
+                  <Input value={con.whatsapp ?? ""} onChange={e => setContact("whatsapp", e.target.value)} placeholder="+880..." />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Website</Label>
+                  <Input value={con.website_url ?? ""} onChange={e => setContact("website_url", e.target.value)} placeholder="https://..." />
+                </div>
+              </div>
             </div>
-            {fac.has_parking && (
-              <div className="flex flex-col gap-1.5 mt-1">
-                <Label>Parking Capacity</Label>
-                <Input type="number" value={fac.parking_capacity ?? ""} onChange={e => setFacility("parking_capacity", e.target.value ? parseInt(e.target.value) : null)} placeholder="Number of spaces" className="w-40" />
+
+            {/* Facilities — edit */}
+            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+              <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
+              <div className="flex flex-col gap-3">
+                {FACILITY_LABELS.map(({ key, label }) => (
+                  <div key={key} className="flex items-center justify-between">
+                    <Label htmlFor={`fac-${key}`} className="text-sm font-normal cursor-pointer">{label}</Label>
+                    <Switch id={`fac-${key}`} checked={!!(fac[key] as boolean)} onCheckedChange={v => setFacility(key, v)} />
+                  </div>
+                ))}
               </div>
-            )}
-            <div className="grid grid-cols-2 gap-4 mt-1">
-              <div className="flex flex-col gap-1.5">
-                <Label>Imam Name</Label>
-                <Input value={fac.imam_name ?? ""} onChange={e => setFacility("imam_name", e.target.value || null)} placeholder="Sheikh..." />
-              </div>
-              <div className="flex flex-col gap-1.5">
-                <Label>Imam Qualifications</Label>
-                <Input value={fac.imam_qualifications ?? ""} onChange={e => setFacility("imam_qualifications", e.target.value || null)} placeholder="e.g. Al-Azhar graduate" />
+              {fac.has_parking && (
+                <div className="flex flex-col gap-1.5 mt-1">
+                  <Label>Parking Capacity</Label>
+                  <Input type="number" value={fac.parking_capacity ?? ""} onChange={e => setFacility("parking_capacity", e.target.value ? parseInt(e.target.value) : null)} placeholder="Number of spaces" className="w-40" />
+                </div>
+              )}
+              <div className="grid grid-cols-2 gap-4 mt-1">
+                <div className="flex flex-col gap-1.5">
+                  <Label>Imam Name</Label>
+                  <Input value={fac.imam_name ?? ""} onChange={e => setFacility("imam_name", e.target.value || null)} placeholder="Sheikh..." />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Imam Qualifications</Label>
+                  <Input value={fac.imam_qualifications ?? ""} onChange={e => setFacility("imam_qualifications", e.target.value || null)} placeholder="e.g. Al-Azhar graduate" />
+                </div>
               </div>
             </div>
-          </div>
-        </div>
+          </>
+        ) : (
+          /* ── VIEW MODE ── */
+          <>
+            {/* Basic Info — view */}
+            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+              <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
+
+              <Field label="Masjid Name" value={masjid.name} />
+              <Field label="Full Address" value={masjid.address} />
+
+              <div className="grid grid-cols-2 gap-4">
+                <Field label="Admin Region" value={masjid.admin_region} />
+                <Field label="Timezone" value={masjid.timezone} />
+              </div>
+
+              {(mCon.phone || mCon.email || mCon.whatsapp || mCon.website_url) && (
+                <>
+                  <div className="border-t border-border/20 pt-4">
+                    <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Contact</p>
+                    <div className="grid grid-cols-2 gap-4">
+                      <Field label="Phone" value={mCon.phone} />
+                      <Field label="Email" value={mCon.email} />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <Field label="WhatsApp" value={mCon.whatsapp} />
+                    <Field label="Website" value={mCon.website_url} />
+                  </div>
+                </>
+              )}
+            </div>
+
+            {/* Facilities — view */}
+            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+              <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
+
+              <div className="flex flex-wrap gap-2">
+                {FACILITY_LABELS.map(({ key, label }) => {
+                  const active = !!(mFac[key] as boolean);
+                  return (
+                    <span
+                      key={key}
+                      className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${
+                        active
+                          ? "bg-[#D4EDDA] text-[#155724] border-[#c3e6cb]"
+                          : "bg-muted/40 text-muted-foreground border-border/30"
+                      }`}
+                    >
+                      <span>{active ? "✓" : "✗"}</span>
+                      {label}
+                    </span>
+                  );
+                })}
+              </div>
+
+              {(mFac.imam_name || mFac.imam_qualifications || (mFac.has_parking && mFac.parking_capacity)) && (
+                <div className="border-t border-border/20 pt-4 grid grid-cols-2 gap-4">
+                  {mFac.imam_name && <Field label="Imam" value={mFac.imam_name} />}
+                  {mFac.imam_qualifications && <Field label="Qualifications" value={mFac.imam_qualifications} />}
+                  {mFac.has_parking && mFac.parking_capacity && (
+                    <Field label="Parking Capacity" value={`${mFac.parking_capacity} spaces`} />
+                  )}
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );
