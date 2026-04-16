@@ -7,6 +7,8 @@ import { Plus, Search, ChevronDown, BadgeCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { masjidsApi } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
@@ -35,7 +37,10 @@ export default function MasjidsPage() {
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
   const [status, setStatus] = useState("All");
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [suspendTargetId, setSuspendTargetId] = useState<string | null>(null);
   const [suspendReason, setSuspendReason] = useState("");
+  const [suspendLoading, setSuspendLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -64,14 +69,26 @@ export default function MasjidsPage() {
     } catch { toast.error("Failed to verify"); }
   };
 
-  const handleSuspend = async (id: string) => {
-    const reason = prompt("Reason for suspension (min 10 chars):");
-    if (!reason || reason.length < 10) { toast.error("Reason too short"); return; }
+  const handleSuspend = (id: string) => {
+    setSuspendTargetId(id);
+    setSuspendReason("");
+    setSuspendDialogOpen(true);
+  };
+
+  const confirmSuspend = async () => {
+    if (!suspendTargetId) return;
+    if (suspendReason.length < 10) { toast.error("Reason must be at least 10 characters"); return; }
+    setSuspendLoading(true);
     try {
-      await masjidsApi.suspend(id, reason);
+      await masjidsApi.suspend(suspendTargetId, suspendReason);
       toast.success("Masjid suspended");
+      setSuspendDialogOpen(false);
       load();
-    } catch { toast.error("Failed to suspend"); }
+    } catch {
+      toast.error("Failed to suspend");
+    } finally {
+      setSuspendLoading(false);
+    }
   };
 
   const handleUnsuspend = async (id: string) => {
@@ -180,6 +197,34 @@ export default function MasjidsPage() {
         ))}
       </div>
       {total > 0 && <p className="text-xs text-muted-foreground">{total} total masjids</p>}
+
+      <Dialog open={suspendDialogOpen} onOpenChange={open => { if (!suspendLoading) setSuspendDialogOpen(open); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Suspend Masjid</DialogTitle>
+            <DialogDescription>
+              Provide a reason for the suspension. This will be visible to the masjid admin.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Enter reason for suspension (min 10 characters)"
+            value={suspendReason}
+            onChange={e => setSuspendReason(e.target.value)}
+            rows={4}
+            maxLength={500}
+          />
+          <p className="text-xs text-muted-foreground text-right">{suspendReason.length}/500</p>
+          <DialogFooter showCloseButton>
+            <Button
+              onClick={confirmSuspend}
+              disabled={suspendReason.length < 10 || suspendLoading}
+              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+            >
+              {suspendLoading ? "Suspending…" : "Suspend"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

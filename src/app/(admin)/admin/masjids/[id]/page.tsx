@@ -18,6 +18,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 import { masjidsApi } from "@/lib/api/masjids";
 import { prayerTimesApi } from "@/lib/api/prayer-times";
 import { toast } from "sonner";
@@ -95,6 +97,9 @@ export default function MasjidDetailPage() {
   const [saving, setSaving] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [removeOpen, setRemoveOpen] = useState(false);
+  const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
+  const [suspendReason, setSuspendReason] = useState("");
+  const [suspendLoading, setSuspendLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -167,11 +172,21 @@ export default function MasjidDetailPage() {
     catch { toast.error("Failed to activate"); }
   };
 
-  const handleSuspend = async () => {
-    const reason = prompt("Reason for suspension (min 10 chars):");
-    if (!reason || reason.length < 10) { toast.error("Reason too short"); return; }
-    try { await masjidsApi.suspend(id, reason); toast.success("Masjid suspended"); load(); }
-    catch { toast.error("Failed to suspend"); }
+  const handleSuspend = () => {
+    setSuspendReason("");
+    setSuspendDialogOpen(true);
+  };
+
+  const confirmSuspend = async () => {
+    if (suspendReason.length < 10) { toast.error("Reason must be at least 10 characters"); return; }
+    setSuspendLoading(true);
+    try {
+      await masjidsApi.suspend(id, suspendReason);
+      toast.success("Masjid suspended");
+      setSuspendDialogOpen(false);
+      load();
+    } catch { toast.error("Failed to suspend"); }
+    finally { setSuspendLoading(false); }
   };
 
   const handleUnsuspend = async () => {
@@ -355,9 +370,9 @@ export default function MasjidDetailPage() {
                 </Button>
               )}
               {masjid.status === "active" && (
-                <Button onClick={handleSuspend} variant="outline" className="w-full border-white/30 text-white hover:bg-white/10 text-sm h-9">
+                <button onClick={handleSuspend} className="w-full h-9 rounded-lg border border-white/40 text-white text-sm hover:bg-white/10 transition-colors">
                   Suspend
-                </Button>
+                </button>
               )}
               {masjid.status === "suspended" && (
                 <Button onClick={handleUnsuspend} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9">
@@ -407,6 +422,35 @@ export default function MasjidDetailPage() {
           </div>
         </div>
       </div>
+
+      {/* Suspend dialog */}
+      <Dialog open={suspendDialogOpen} onOpenChange={open => { if (!suspendLoading) setSuspendDialogOpen(open); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Suspend Masjid</DialogTitle>
+            <DialogDescription>
+              Provide a reason for the suspension. This will be visible to the masjid admin.
+            </DialogDescription>
+          </DialogHeader>
+          <Textarea
+            placeholder="Enter reason for suspension (min 10 characters)"
+            value={suspendReason}
+            onChange={e => setSuspendReason(e.target.value)}
+            rows={4}
+            maxLength={500}
+          />
+          <p className="text-xs text-muted-foreground text-right">{suspendReason.length}/500</p>
+          <DialogFooter showCloseButton>
+            <Button
+              onClick={confirmSuspend}
+              disabled={suspendReason.length < 10 || suspendLoading}
+              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+            >
+              {suspendLoading ? "Suspending…" : "Suspend"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {/* Remove confirmation dialog */}
       <AlertDialog open={removeOpen} onOpenChange={setRemoveOpen}>
