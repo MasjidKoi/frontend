@@ -7,6 +7,16 @@ export const announcementsApi = {
     return res.data;
   },
 
+  async listAdmin(masjidId: string, params?: { page?: number; page_size?: number }) {
+    const res = await apiClient.get().get(ENDPOINTS.announcements.listAdmin(masjidId), { params });
+    return res.data;
+  },
+
+  async listPlatform(params?: { page?: number; page_size?: number; masjid_id?: string }) {
+    const res = await apiClient.get().get(ENDPOINTS.admin.announcements, { params });
+    return res.data;
+  },
+
   async create(masjidId: string, data: { title: string; body: string; publish?: boolean }) {
     const res = await apiClient.get().post(ENDPOINTS.announcements.create(masjidId), data);
     return res.data;

@@ -35,16 +35,18 @@ export const ENDPOINTS = {
   },
 
   announcements: {
-    list:    (masjidId: string) => `/masjids/${masjidId}/announcements`,
-    create:  (masjidId: string) => `/masjids/${masjidId}/announcements`,
-    byId:    (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
-    update:  (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
-    publish: (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}/publish`,
-    delete:  (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
+    list:        (masjidId: string) => `/masjids/${masjidId}/announcements`,
+    listAdmin:   (masjidId: string) => `/masjids/${masjidId}/announcements/admin`,
+    create:      (masjidId: string) => `/masjids/${masjidId}/announcements`,
+    byId:        (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
+    update:      (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
+    publish:     (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}/publish`,
+    delete:      (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
   },
 
   admin: {
-    stats:    "/admin/stats",
-    auditLog: "/admin/audit-log",
+    stats:                "/admin/stats",
+    auditLog:             "/admin/audit-log",
+    announcements:        "/admin/announcements",
   },
 } as const;

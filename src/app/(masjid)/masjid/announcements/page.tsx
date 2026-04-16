@@ -58,9 +58,7 @@ export default function AnnouncementsPage() {
   const load = useCallback(async () => {
     setLoading(true);
     try {
-      // Fetch all — list returns only published by default, need both
-      // Use large page_size to get drafts too (admin sees all)
-      const data = await announcementsApi.list(id, { page_size: 100 });
+      const data = await announcementsApi.listAdmin(id, { page_size: 100 });
       setItems(data.items ?? []);
     } catch {
       toast.error("Failed to load announcements");

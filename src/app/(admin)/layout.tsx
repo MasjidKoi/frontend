@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import {
   LayoutDashboard,
   Building2,
+  Megaphone,
   Users,
   ShieldCheck,
   LogOut,
@@ -16,6 +17,7 @@ import { authApi } from "@/lib/api/auth";
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { href: "/admin/masjids", label: "Masjids", icon: Building2 },
+  { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
   { href: "/admin/users", label: "Users", icon: Users },
   { href: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
 ];

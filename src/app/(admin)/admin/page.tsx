@@ -16,6 +16,8 @@ interface Stats {
   pending_masjids: number;
   suspended_masjids: number;
   verified_masjids: number;
+  total_announcements: number;
+  published_announcements: number;
 }
 
 interface Masjid {
@@ -109,8 +111,8 @@ export default function DashboardPage() {
           </div>
           <div className="bg-primary rounded-xl p-5 flex flex-col gap-2">
             <p className="text-sm text-secondary/80">Announcements</p>
-            <p className="font-heading text-4xl font-bold text-white">—</p>
-            <p className="text-xs text-white/50">Coming soon</p>
+            <p className="font-heading text-4xl font-bold text-white">{stats?.total_announcements ?? 0}</p>
+            <p className="text-xs text-white/50">{stats?.published_announcements ?? 0} published</p>
           </div>
           <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
             <p className="text-sm text-muted-foreground">Audit Events</p>

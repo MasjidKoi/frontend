@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
-import { useParams } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,18 +14,24 @@ import {
   AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { announcementsApi } from "@/lib/api/announcements";
+import { masjidsApi } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
-interface Announcement {
+interface AnnouncementWithMasjid {
   announcement_id: string;
+  masjid_id: string;
+  masjid_name: string;
   title: string;
   body: string;
   is_published: boolean;
   published_at: string | null;
   created_at: string;
-  updated_at: string;
   posted_by_email: string | null;
 }
+
+interface MasjidOption { masjid_id: string; name: string; }
+
+const PAGE_SIZE = 20;
 
 function timeAgo(iso: string) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -36,42 +41,68 @@ function timeAgo(iso: string) {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-export default function AnnouncementsPage() {
-  const { id } = useParams<{ id: string }>();
-  const [items, setItems] = useState<Announcement[]>([]);
+export default function PlatformAnnouncementsPage() {
+  const [items, setItems] = useState<AnnouncementWithMasjid[]>([]);
   const [loading, setLoading] = useState(true);
+  const [page, setPage] = useState(1);
+  const [total, setTotal] = useState(0);
+
+  // Form state (shared create/edit dialog)
   const [formOpen, setFormOpen] = useState(false);
-  const [editItem, setEditItem] = useState<Announcement | null>(null);
-  const [deleteItem, setDeleteItem] = useState<Announcement | null>(null);
+  const [editItem, setEditItem] = useState<AnnouncementWithMasjid | null>(null);
+  const [formMasjidId, setFormMasjidId] = useState("");
   const [formTitle, setFormTitle] = useState("");
   const [formBody, setFormBody] = useState("");
   const [formPublish, setFormPublish] = useState(false);
   const [submitting, setSubmitting] = useState(false);
 
-  const load = useCallback(async () => {
+  // Masjid options for the create dropdown
+  const [masjids, setMasjids] = useState<MasjidOption[]>([]);
+  const [masjidsLoading, setMasjidsLoading] = useState(false);
+
+  const [deleteItem, setDeleteItem] = useState<AnnouncementWithMasjid | null>(null);
+
+  const load = useCallback(async (p = page) => {
     setLoading(true);
     try {
-      const data = await announcementsApi.listAdmin(id, { page_size: 100 });
+      const data = await announcementsApi.listPlatform({ page: p, page_size: PAGE_SIZE });
       setItems(data.items ?? []);
+      setTotal(data.total ?? 0);
     } catch {
       toast.error("Failed to load announcements");
     } finally {
       setLoading(false);
     }
-  }, [id]);
+  }, [page]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => { load(page); }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const openCreate = () => {
+  const loadMasjids = useCallback(async () => {
+    if (masjids.length > 0) return; // already loaded
+    setMasjidsLoading(true);
+    try {
+      const data = await masjidsApi.list({ page_size: 100 });
+      setMasjids(data.items ?? []);
+    } catch {
+      toast.error("Failed to load masjids");
+    } finally {
+      setMasjidsLoading(false);
+    }
+  }, [masjids.length]);
+
+  const openCreate = async () => {
     setEditItem(null);
     setFormTitle("");
     setFormBody("");
     setFormPublish(false);
+    setFormMasjidId("");
     setFormOpen(true);
+    await loadMasjids();
   };
 
-  const openEdit = (ann: Announcement) => {
+  const openEdit = (ann: AnnouncementWithMasjid) => {
     setEditItem(ann);
+    setFormMasjidId(ann.masjid_id);
     setFormTitle(ann.title);
     setFormBody(ann.body);
     setFormPublish(ann.is_published);
@@ -80,17 +111,18 @@ export default function AnnouncementsPage() {
 
   const handleSubmit = async () => {
     if (!formTitle.trim() || !formBody.trim()) { toast.error("Title and body are required"); return; }
+    if (!editItem && !formMasjidId) { toast.error("Please select a masjid"); return; }
     setSubmitting(true);
     try {
       if (editItem) {
-        await announcementsApi.update(id, editItem.announcement_id, { title: formTitle, body: formBody });
+        await announcementsApi.update(editItem.masjid_id, editItem.announcement_id, { title: formTitle, body: formBody });
         toast.success("Announcement updated");
       } else {
-        await announcementsApi.create(id, { title: formTitle, body: formBody, publish: formPublish });
+        await announcementsApi.create(formMasjidId, { title: formTitle, body: formBody, publish: formPublish });
         toast.success(formPublish ? "Published!" : "Draft saved");
       }
       setFormOpen(false);
-      load();
+      load(page);
     } catch (err: unknown) {
       toast.error((err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? "Failed");
     } finally {
@@ -98,23 +130,25 @@ export default function AnnouncementsPage() {
     }
   };
 
-  const handlePublish = async (ann: Announcement) => {
+  const handlePublish = async (ann: AnnouncementWithMasjid) => {
     try {
-      await announcementsApi.publish(id, ann.announcement_id);
+      await announcementsApi.publish(ann.masjid_id, ann.announcement_id);
       toast.success("Published!");
-      load();
+      load(page);
     } catch { toast.error("Failed to publish"); }
   };
 
   const handleDelete = async () => {
     if (!deleteItem) return;
     try {
-      await announcementsApi.delete(id, deleteItem.announcement_id);
+      await announcementsApi.delete(deleteItem.masjid_id, deleteItem.announcement_id);
       toast.success("Deleted");
       setDeleteItem(null);
-      load();
+      load(page);
     } catch { toast.error("Failed to delete"); }
   };
+
+  const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
     <div className="p-8 flex flex-col gap-6">
@@ -122,7 +156,7 @@ export default function AnnouncementsPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Announcements</h1>
-          <p className="text-sm text-muted-foreground mt-0.5">Post updates and events for your community</p>
+          <p className="text-sm text-muted-foreground mt-0.5">All announcements across all masjids</p>
         </div>
         <Button onClick={openCreate} className="bg-primary hover:bg-primary/90 gap-2">
           <Plus className="h-4 w-4" /> New Announcement
@@ -132,7 +166,7 @@ export default function AnnouncementsPage() {
       {/* List */}
       {loading ? (
         <div className="flex flex-col gap-4">
-          {[1,2].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
+          {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : items.length === 0 ? (
         <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
@@ -145,6 +179,14 @@ export default function AnnouncementsPage() {
             <div key={ann.announcement_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
+                  <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                    <span className="text-xs font-medium bg-accent/10 text-accent rounded-full px-2.5 py-0.5 shrink-0">
+                      {ann.masjid_name}
+                    </span>
+                    {ann.posted_by_email && (
+                      <span className="text-xs text-muted-foreground">{ann.posted_by_email}</span>
+                    )}
+                  </div>
                   <h3 className="font-semibold text-foreground text-base">{ann.title}</h3>
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>
                 </div>
@@ -189,20 +231,55 @@ export default function AnnouncementsPage() {
         </div>
       )}
 
-      {/* Create/Edit dialog */}
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex items-center justify-between pt-2">
+          <p className="text-sm text-muted-foreground">{total} total</p>
+          <div className="flex gap-2">
+            <Button variant="outline" size="sm" onClick={() => setPage(p => p - 1)} disabled={page === 1}>
+              Previous
+            </Button>
+            <span className="flex items-center text-sm text-muted-foreground px-2">
+              {page} / {totalPages}
+            </span>
+            <Button variant="outline" size="sm" onClick={() => setPage(p => p + 1)} disabled={page >= totalPages}>
+              Next
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* Create / Edit dialog */}
       <Dialog open={formOpen} onOpenChange={setFormOpen}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editItem ? "Edit Announcement" : "New Announcement"}</DialogTitle>
           </DialogHeader>
           <div className="flex flex-col gap-4 mt-2">
+            {/* Masjid selector — only for create */}
+            {!editItem && (
+              <div className="flex flex-col gap-1.5">
+                <Label>Masjid *</Label>
+                <select
+                  value={formMasjidId}
+                  onChange={e => setFormMasjidId(e.target.value)}
+                  disabled={masjidsLoading}
+                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none disabled:opacity-60"
+                >
+                  <option value="">{masjidsLoading ? "Loading…" : "Select a masjid"}</option>
+                  {masjids.map(m => (
+                    <option key={m.masjid_id} value={m.masjid_id}>{m.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
             <div className="flex flex-col gap-1.5">
               <Label>Title *</Label>
               <Input
                 value={formTitle}
                 onChange={e => setFormTitle(e.target.value)}
                 placeholder="Announcement title"
-                autoFocus
+                autoFocus={!!editItem}
               />
             </div>
             <div className="flex flex-col gap-1.5">
@@ -223,11 +300,7 @@ export default function AnnouncementsPage() {
             )}
             <div className="flex gap-3 justify-end pt-1">
               <Button variant="outline" onClick={() => setFormOpen(false)}>Cancel</Button>
-              <Button
-                onClick={handleSubmit}
-                disabled={submitting}
-                className="bg-primary hover:bg-primary/90"
-              >
+              <Button onClick={handleSubmit} disabled={submitting} className="bg-primary hover:bg-primary/90">
                 {submitting ? "Saving…" : editItem ? "Save Changes" : formPublish ? "Publish" : "Save Draft"}
               </Button>
             </div>
