@@ -18,6 +18,8 @@ interface Stats {
   verified_masjids: number;
   total_announcements: number;
   published_announcements: number;
+  total_users: number;
+  active_campaigns: number;
 }
 
 interface Masjid {
@@ -37,7 +39,7 @@ interface AuditEntry {
 
 const STATUS_STYLES: Record<string, string> = {
   active: "bg-[#D4EDDA] text-[#155724]",
-  pending: "bg-[#FFF3CD] text-[#856404]",
+  pending: "bg-[#FFF3CD] text-[#7a5500]",
   suspended: "bg-[#FFEDED] text-[#C0392B]",
   removed: "bg-muted text-muted-foreground",
 };
@@ -92,9 +94,9 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      {/* Stat cards */}
-      <div className="grid grid-cols-4 gap-4">
-        {loading ? Array(4).fill(0).map((_, i) => (
+      {/* Stat cards — row 1 */}
+      <div className="grid grid-cols-3 gap-4">
+        {loading ? Array(3).fill(0).map((_, i) => (
           <Skeleton key={i} className="h-28 rounded-xl" />
         )) : (<>
           <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
@@ -105,19 +107,37 @@ export default function DashboardPage() {
             </p>
           </div>
           <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
-            <p className="text-sm text-muted-foreground">Verified Masjids</p>
-            <p className="font-heading text-4xl font-bold text-foreground">{stats?.verified_masjids ?? 0}</p>
-            <p className="text-xs text-muted-foreground">{(stats?.total_masjids ?? 0) - (stats?.verified_masjids ?? 0)} pending verification</p>
+            <p className="text-sm text-muted-foreground">App Users</p>
+            <p className="font-heading text-4xl font-bold text-foreground">{stats?.total_users ?? 0}</p>
+            <p className="text-xs text-muted-foreground">registered mobile users</p>
           </div>
           <div className="bg-primary rounded-xl p-5 flex flex-col gap-2">
             <p className="text-sm text-secondary/80">Announcements</p>
             <p className="font-heading text-4xl font-bold text-white">{stats?.total_announcements ?? 0}</p>
             <p className="text-xs text-white/50">{stats?.published_announcements ?? 0} published</p>
           </div>
-          <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
-            <p className="text-sm text-muted-foreground">Audit Events</p>
-            <p className="font-heading text-4xl font-bold text-foreground">{audit.length}</p>
-            <p className="text-xs text-muted-foreground">Last 7 days</p>
+        </>)}
+      </div>
+
+      {/* Stat cards — row 2 */}
+      <div className="grid grid-cols-3 gap-4">
+        {loading ? Array(3).fill(0).map((_, i) => (
+          <Skeleton key={i} className="h-20 rounded-xl" />
+        )) : (<>
+          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+            <p className="text-xs text-muted-foreground">Verified Masjids</p>
+            <p className="font-heading text-2xl font-bold text-foreground">{stats?.verified_masjids ?? 0}</p>
+            <p className="text-xs text-muted-foreground">{(stats?.total_masjids ?? 0) - (stats?.verified_masjids ?? 0)} pending verification</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+            <p className="text-xs text-muted-foreground">Active Campaigns</p>
+            <p className="font-heading text-2xl font-bold text-foreground">{stats?.active_campaigns ?? 0}</p>
+            <p className="text-xs text-muted-foreground">fundraising campaigns</p>
+          </div>
+          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+            <p className="text-xs text-muted-foreground">Recent Activity</p>
+            <p className="font-heading text-2xl font-bold text-foreground">{audit.length}</p>
+            <p className="text-xs text-muted-foreground">audit events loaded</p>
           </div>
         </>)}
       </div>

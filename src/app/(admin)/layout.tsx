@@ -9,17 +9,27 @@ import {
   Users,
   ShieldCheck,
   LogOut,
+  Smartphone,
+  BarChart2,
+  Settings2,
+  LifeBuoy,
+  Flag,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { authApi } from "@/lib/api/auth";
 
 const NAV = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, exact: true },
-  { href: "/admin/masjids", label: "Masjids", icon: Building2 },
+  { href: "/admin",            label: "Dashboard",    icon: LayoutDashboard, exact: true },
+  { href: "/admin/masjids",    label: "Masjids",      icon: Building2 },
   { href: "/admin/announcements", label: "Announcements", icon: Megaphone },
-  { href: "/admin/users", label: "Users", icon: Users },
-  { href: "/admin/audit-log", label: "Audit Log", icon: ShieldCheck },
+  { href: "/admin/app-users",  label: "App Users",    icon: Smartphone },
+  { href: "/admin/analytics",  label: "Analytics",    icon: BarChart2 },
+  { href: "/admin/users",      label: "Admin Users",  icon: Users },
+  { href: "/admin/audit-log",  label: "Audit Log",    icon: ShieldCheck },
+  { href: "/admin/support",    label: "Support",      icon: LifeBuoy },
+  { href: "/admin/reports",    label: "Reports",      icon: Flag },
+  { href: "/admin/settings",   label: "Settings",     icon: Settings2 },
 ];
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
