@@ -68,7 +68,7 @@ interface PrayerTime { fajr_azan: string; dhuhr_azan: string; asr_azan: string; 
 
 const STATUS_STYLES: Record<string, string> = {
   active:    "bg-[#D4EDDA] text-[#155724]",
-  pending:   "bg-[#FFF3CD] text-[#856404]",
+  pending:   "bg-[#FFF3CD] text-[#7a5500]",
   suspended: "bg-[#FFEDED] text-[#C0392B]",
   removed:   "bg-muted text-muted-foreground",
 };
@@ -100,6 +100,11 @@ export default function MasjidDetailPage() {
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
   const [suspendReason, setSuspendReason] = useState("");
   const [suspendLoading, setSuspendLoading] = useState(false);
+  const [mergeOpen, setMergeOpen] = useState(false);
+  const [mergeTargetId, setMergeTargetId] = useState("");
+  const [mergeLoading, setMergeLoading] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [removing, setRemoving] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -163,13 +168,17 @@ export default function MasjidDetailPage() {
   };
 
   const handleVerify = async () => {
+    setActionLoading(true);
     try { await masjidsApi.verify(id); toast.success("Masjid verified ✓"); load(); }
     catch { toast.error("Failed to verify"); }
+    finally { setActionLoading(false); }
   };
 
   const handleActivate = async () => {
+    setActionLoading(true);
     try { await masjidsApi.update(id, { status: "active" }); toast.success("Masjid activated"); load(); }
     catch { toast.error("Failed to activate"); }
+    finally { setActionLoading(false); }
   };
 
   const handleSuspend = () => {
@@ -190,14 +199,31 @@ export default function MasjidDetailPage() {
   };
 
   const handleUnsuspend = async () => {
+    setActionLoading(true);
     try { await masjidsApi.update(id, { status: "active" }); toast.success("Masjid unsuspended"); load(); }
     catch { toast.error("Failed to unsuspend"); }
+    finally { setActionLoading(false); }
   };
 
   const handleRemove = async () => {
+    setRemoving(true);
     try { await masjidsApi.update(id, { status: "removed" }); toast.success("Masjid removed"); router.push("/admin/masjids"); }
     catch { toast.error("Failed to remove"); }
-    finally { setRemoveOpen(false); }
+    finally { setRemoving(false); setRemoveOpen(false); }
+  };
+
+  const handleMerge = async () => {
+    if (!mergeTargetId.trim()) { toast.error("Enter a target masjid ID"); return; }
+    setMergeLoading(true);
+    try {
+      await masjidsApi.merge(id, mergeTargetId.trim());
+      toast.success("Masjids merged successfully");
+      router.push("/admin/masjids");
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? "Merge failed");
+    } finally {
+      setMergeLoading(false);
+    }
   };
 
   if (loading) return (
@@ -205,7 +231,7 @@ export default function MasjidDetailPage() {
       <Skeleton className="h-8 w-64" />
       <div className="flex gap-5">
         <div className="flex-1 flex flex-col gap-5"><Skeleton className="h-64" /><Skeleton className="h-96" /></div>
-        <div className="w-72 flex flex-col gap-5"><Skeleton className="h-48" /><Skeleton className="h-40" /></div>
+        <div className="w-full lg:w-72 flex flex-col gap-5"><Skeleton className="h-48" /><Skeleton className="h-40" /></div>
       </div>
     </div>
   );
@@ -232,7 +258,7 @@ export default function MasjidDetailPage() {
       </div>
 
       {/* Two-column layout */}
-      <div className="flex gap-5 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 items-start">
         {/* Left column */}
         <div className="flex-1 flex flex-col gap-5">
 
@@ -256,11 +282,12 @@ export default function MasjidDetailPage() {
                 <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
               </div>
               <div className="flex flex-col gap-1.5">
-                <Label>Timezone</Label>
+                <Label htmlFor="masjid-timezone">Timezone</Label>
                 <select
+                  id="masjid-timezone"
                   value={form.timezone ?? "Asia/Dhaka"}
                   onChange={e => set("timezone", e.target.value)}
-                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none"
+                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
                 >
                   <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                   <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
@@ -336,7 +363,7 @@ export default function MasjidDetailPage() {
         </div>
 
         {/* Right column */}
-        <div className="w-72 shrink-0 flex flex-col gap-5">
+        <div className="w-full lg:w-72 shrink-0 flex flex-col gap-5">
 
           {/* Status & Verification */}
           <div className="bg-primary rounded-xl p-5 flex flex-col gap-4">
@@ -360,13 +387,13 @@ export default function MasjidDetailPage() {
 
             <div className="flex flex-col gap-2">
               {masjid.status === "pending" && (
-                <Button onClick={handleActivate} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9">
-                  Activate
+                <Button onClick={handleActivate} disabled={actionLoading} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9 disabled:opacity-50">
+                  {actionLoading ? "Activating…" : "Activate"}
                 </Button>
               )}
               {masjid.status === "active" && !masjid.verified && (
-                <Button onClick={handleVerify} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9">
-                  <BadgeCheck className="h-4 w-4 mr-1.5" /> Verify Masjid
+                <Button onClick={handleVerify} disabled={actionLoading} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9 disabled:opacity-50">
+                  <BadgeCheck className="h-4 w-4 mr-1.5" /> {actionLoading ? "Verifying…" : "Verify Masjid"}
                 </Button>
               )}
               {masjid.status === "active" && (
@@ -375,8 +402,8 @@ export default function MasjidDetailPage() {
                 </button>
               )}
               {masjid.status === "suspended" && (
-                <Button onClick={handleUnsuspend} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9">
-                  Unsuspend
+                <Button onClick={handleUnsuspend} disabled={actionLoading} className="w-full bg-secondary text-primary hover:bg-secondary/90 font-semibold text-sm h-9 disabled:opacity-50">
+                  {actionLoading ? "Unsuspending…" : "Unsuspend"}
                 </Button>
               )}
             </div>
@@ -411,13 +438,19 @@ export default function MasjidDetailPage() {
               <AlertTriangle className="h-4 w-4" /> Danger Zone
             </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
-              Removing this masjid sets its status to &quot;removed&quot;. It will no longer appear in search results.
+              Removing this masjid sets its status to &quot;removed&quot;. Merging moves all data into another masjid and deletes this one.
             </p>
             <button
               onClick={() => setRemoveOpen(true)}
               className="w-full h-9 rounded-lg border border-[#C0392B] text-[#C0392B] text-sm hover:bg-[#FFEDED] transition-colors"
             >
               Remove Masjid
+            </button>
+            <button
+              onClick={() => { setMergeTargetId(""); setMergeOpen(true); }}
+              className="w-full h-9 rounded-lg border border-[#C0392B] text-[#C0392B] text-sm hover:bg-[#FFEDED] transition-colors"
+            >
+              Merge into Another…
             </button>
           </div>
         </div>
@@ -453,7 +486,7 @@ export default function MasjidDetailPage() {
       </Dialog>
 
       {/* Remove confirmation dialog */}
-      <AlertDialog open={removeOpen} onOpenChange={setRemoveOpen}>
+      <AlertDialog open={removeOpen} onOpenChange={open => { if (!removing) setRemoveOpen(open); }}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Remove &quot;{masjid.name}&quot;?</AlertDialogTitle>
@@ -462,16 +495,47 @@ export default function MasjidDetailPage() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRemove}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              disabled={removing}
+              className="bg-[#C0392B] hover:bg-[#a93226] text-white disabled:opacity-50"
             >
-              Remove Masjid
+              {removing ? "Removing…" : "Remove Masjid"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Merge dialog */}
+      <Dialog open={mergeOpen} onOpenChange={open => { if (!mergeLoading) setMergeOpen(open); }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Merge &quot;{masjid.name}&quot; into Another</DialogTitle>
+            <DialogDescription>
+              All data from this masjid (announcements, events, followers, etc.) will be moved to the target. This masjid will be permanently deleted.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col gap-3 mt-2">
+            <Label>Target Masjid ID (UUID)</Label>
+            <Input
+              value={mergeTargetId}
+              onChange={e => setMergeTargetId(e.target.value)}
+              placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx"
+              className="font-mono text-sm"
+            />
+          </div>
+          <DialogFooter showCloseButton>
+            <Button
+              onClick={handleMerge}
+              disabled={!mergeTargetId.trim() || mergeLoading}
+              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+            >
+              {mergeLoading ? "Merging…" : "Merge & Delete This Masjid"}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

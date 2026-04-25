@@ -7,9 +7,14 @@ import { ArrowLeft } from "lucide-react";
 import { masjidsApi } from "@/lib/api/masjids";
 
 const TABS = [
-  { label: "Profile", path: "" },
-  { label: "Prayer Times", path: "/prayer-times" },
+  { label: "Profile",       path: "" },
+  { label: "Prayer Times",  path: "/prayer-times" },
   { label: "Announcements", path: "/announcements" },
+  { label: "Events",        path: "/events" },
+  { label: "Campaigns",     path: "/campaigns" },
+  { label: "Reviews",       path: "/reviews" },
+  { label: "Co-admins",     path: "/co-admins" },
+  { label: "Photos",        path: "/photos" },
 ];
 
 export default function MasjidSubLayout({ children }: { children: React.ReactNode }) {

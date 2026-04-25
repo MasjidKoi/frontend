@@ -47,6 +47,7 @@ export default function AnnouncementsPage() {
   const [formBody, setFormBody] = useState("");
   const [formPublish, setFormPublish] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [publishing, setPublishing] = useState<string | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -99,11 +100,13 @@ export default function AnnouncementsPage() {
   };
 
   const handlePublish = async (ann: Announcement) => {
+    setPublishing(ann.announcement_id);
     try {
       await announcementsApi.publish(id, ann.announcement_id);
       toast.success("Published!");
       load();
     } catch { toast.error("Failed to publish"); }
+    finally { setPublishing(null); }
   };
 
   const handleDelete = async () => {
@@ -149,7 +152,7 @@ export default function AnnouncementsPage() {
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>
                 </div>
                 <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${
-                  ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#856404]"
+                  ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#7a5500]"
                 }`}>
                   {ann.is_published ? "Published" : "Draft"}
                 </span>
@@ -165,9 +168,10 @@ export default function AnnouncementsPage() {
                   {!ann.is_published && (
                     <button
                       onClick={() => handlePublish(ann)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors"
+                      disabled={publishing === ann.announcement_id}
+                      className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      Publish
+                      {publishing === ann.announcement_id ? "Publishing…" : "Publish"}
                     </button>
                   )}
                   <button
@@ -190,7 +194,7 @@ export default function AnnouncementsPage() {
       )}
 
       {/* Create/Edit dialog */}
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+      <Dialog open={formOpen} onOpenChange={open => { if (!submitting) setFormOpen(open); }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editItem ? "Edit Announcement" : "New Announcement"}</DialogTitle>

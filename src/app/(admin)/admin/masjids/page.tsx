@@ -3,7 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Plus, Search, ChevronDown, BadgeCheck } from "lucide-react";
+import { Plus, Search, ChevronDown, BadgeCheck, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -23,7 +23,7 @@ interface Masjid {
 
 const STATUS_STYLES: Record<string, string> = {
   active:    "bg-[#D4EDDA] text-[#155724]",
-  pending:   "bg-[#FFF3CD] text-[#856404]",
+  pending:   "bg-[#FFF3CD] text-[#7a5500]",
   suspended: "bg-[#FFEDED] text-[#C0392B]",
   removed:   "bg-muted text-muted-foreground",
 };
@@ -41,6 +41,12 @@ export default function MasjidsPage() {
   const [suspendTargetId, setSuspendTargetId] = useState<string | null>(null);
   const [suspendReason, setSuspendReason] = useState("");
   const [suspendLoading, setSuspendLoading] = useState(false);
+  const [verifyingId, setVerifyingId] = useState<string | null>(null);
+  const [unsuspendingId, setUnsuspendingId] = useState<string | null>(null);
+  const [importOpen, setImportOpen] = useState(false);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importing, setImporting] = useState(false);
+  const [importResult, setImportResult] = useState<{ created: number; failed: number; errors: { row: number; reason: string }[] } | null>(null);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -62,11 +68,13 @@ export default function MasjidsPage() {
   useEffect(() => { load(); }, [load]);
 
   const handleVerify = async (id: string) => {
+    setVerifyingId(id);
     try {
       await masjidsApi.verify(id);
       toast.success("Masjid verified");
       load();
     } catch { toast.error("Failed to verify"); }
+    finally { setVerifyingId(null); }
   };
 
   const handleSuspend = (id: string) => {
@@ -92,11 +100,28 @@ export default function MasjidsPage() {
   };
 
   const handleUnsuspend = async (id: string) => {
+    setUnsuspendingId(id);
     try {
       await masjidsApi.update(id, { status: "active" });
       toast.success("Masjid unsuspended");
       load();
     } catch { toast.error("Failed to unsuspend"); }
+    finally { setUnsuspendingId(null); }
+  };
+
+  const handleImport = async () => {
+    if (!importFile) return;
+    setImporting(true);
+    try {
+      const result = await masjidsApi.bulkImport(importFile);
+      setImportResult(result);
+      toast.success(`Import complete: ${result.created} created`);
+      load();
+    } catch (err: unknown) {
+      toast.error((err as { response?: { data?: { detail?: string } } })?.response?.data?.detail ?? "Import failed");
+    } finally {
+      setImporting(false);
+    }
   };
 
   return (
@@ -107,9 +132,20 @@ export default function MasjidsPage() {
           <h1 className="font-heading text-2xl font-bold text-foreground">Masjid Management</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Create, verify and manage masjid accounts</p>
         </div>
-        <Button asChild className="bg-primary hover:bg-primary/90 gap-2">
-          <Link href="/admin/masjids/new"><Plus className="h-4 w-4" /> Add Masjid</Link>
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => { setImportFile(null); setImportResult(null); setImportOpen(true); }}>
+            <Upload className="h-4 w-4" /> Import CSV
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => masjidsApi.downloadExport("csv", { status: status !== "All" ? status : undefined })}>
+            <Download className="h-4 w-4" /> CSV
+          </Button>
+          <Button variant="outline" size="sm" className="gap-2" onClick={() => masjidsApi.downloadExport("pdf", { status: status !== "All" ? status : undefined })}>
+            <Download className="h-4 w-4" /> PDF
+          </Button>
+          <Button asChild className="bg-primary hover:bg-primary/90 gap-2">
+            <Link href="/admin/masjids/new"><Plus className="h-4 w-4" /> Add Masjid</Link>
+          </Button>
+        </div>
       </div>
 
       {/* Filters */}
@@ -118,6 +154,7 @@ export default function MasjidsPage() {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search masjids..."
+            aria-label="Search masjids"
             value={q}
             onChange={e => setQ(e.target.value)}
             className="pl-9"
@@ -127,6 +164,7 @@ export default function MasjidsPage() {
           <select
             value={status}
             onChange={e => setStatus(e.target.value)}
+            aria-label="Filter by status"
             className="h-9 rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
           >
             {STATUSES.map(s => <option key={s} value={s}>{s === "All" ? "All Status" : s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
@@ -136,7 +174,7 @@ export default function MasjidsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         {/* Head */}
         <div className="grid grid-cols-[2fr_1fr_120px_100px_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
           {["Masjid Name", "Region", "Status", "Verified", "Actions"].map(h => (
@@ -177,8 +215,9 @@ export default function MasjidsPage() {
               {!m.verified && m.status === "active" && (
                 <button
                   onClick={() => handleVerify(m.masjid_id)}
-                  className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors"
-                >Verify</button>
+                  disabled={verifyingId === m.masjid_id}
+                  className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >{verifyingId === m.masjid_id ? "Verifying…" : "Verify"}</button>
               )}
               {m.status === "active" && (
                 <button
@@ -189,14 +228,70 @@ export default function MasjidsPage() {
               {m.status === "suspended" && (
                 <button
                   onClick={() => handleUnsuspend(m.masjid_id)}
-                  className="text-xs px-3 py-1.5 rounded-md bg-muted text-accent hover:bg-muted/80 transition-colors"
-                >Unsuspend</button>
+                  disabled={unsuspendingId === m.masjid_id}
+                  className="text-xs px-3 py-1.5 rounded-md bg-muted text-accent hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >{unsuspendingId === m.masjid_id ? "Unsuspending…" : "Unsuspend"}</button>
               )}
             </div>
           </div>
         ))}
       </div>
       {total > 0 && <p className="text-xs text-muted-foreground">{total} total masjids</p>}
+
+      {/* Bulk import dialog */}
+      <Dialog open={importOpen} onOpenChange={open => { if (!importing) { setImportOpen(open); } }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Bulk Import Masjids</DialogTitle>
+            <DialogDescription>
+              Upload a CSV or XLSX file. Required columns: <code className="bg-muted px-1 rounded text-xs">name, address, admin_region, lat, lng</code>
+            </DialogDescription>
+          </DialogHeader>
+          {!importResult ? (
+            <>
+              <div className="flex flex-col gap-3 mt-2">
+                <label className="flex flex-col items-center justify-center border-2 border-dashed border-border rounded-lg p-8 cursor-pointer hover:bg-muted/30 transition-colors">
+                  <Upload className="h-8 w-8 text-muted-foreground mb-2" />
+                  <span className="text-sm text-muted-foreground">{importFile ? importFile.name : "Click to choose a CSV or XLSX file"}</span>
+                  <input type="file" accept=".csv,.xlsx" className="hidden" onChange={e => setImportFile(e.target.files?.[0] ?? null)} />
+                </label>
+              </div>
+              <DialogFooter showCloseButton>
+                <Button
+                  onClick={handleImport}
+                  disabled={!importFile || importing}
+                  className="bg-primary hover:bg-primary/90"
+                >
+                  {importing ? "Importing…" : "Upload & Import"}
+                </Button>
+              </DialogFooter>
+            </>
+          ) : (
+            <div className="flex flex-col gap-3 mt-2">
+              <div className="bg-muted/30 rounded-lg p-4 flex gap-6">
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-[#155724]">{importResult.created}</p>
+                  <p className="text-xs text-muted-foreground">Created</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-2xl font-bold text-[#C0392B]">{importResult.failed}</p>
+                  <p className="text-xs text-muted-foreground">Failed</p>
+                </div>
+              </div>
+              {importResult.errors.length > 0 && (
+                <div className="max-h-48 overflow-y-auto flex flex-col gap-1">
+                  {importResult.errors.map((e, i) => (
+                    <p key={i} className="text-xs text-muted-foreground bg-[#FFEDED] rounded px-3 py-1.5">
+                      Row {e.row} — {e.reason}
+                    </p>
+                  ))}
+                </div>
+              )}
+              <Button variant="outline" onClick={() => { setImportFile(null); setImportResult(null); }}>Import Another</Button>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={suspendDialogOpen} onOpenChange={open => { if (!suspendLoading) setSuspendDialogOpen(open); }}>
         <DialogContent>
