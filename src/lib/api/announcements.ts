@@ -17,12 +17,12 @@ export const announcementsApi = {
     return res.data;
   },
 
-  async create(masjidId: string, data: { title: string; body: string; publish?: boolean }) {
+  async create(masjidId: string, data: { title: string; body: string; publish?: boolean; scheduled_at?: string | null }) {
     const res = await apiClient.get().post(ENDPOINTS.announcements.create(masjidId), data);
     return res.data;
   },
 
-  async update(masjidId: string, id: string, data: { title?: string; body?: string }) {
+  async update(masjidId: string, id: string, data: { title?: string; body?: string; scheduled_at?: string | null }) {
     const res = await apiClient.get().patch(ENDPOINTS.announcements.update(masjidId, id), data);
     return res.data;
   },
