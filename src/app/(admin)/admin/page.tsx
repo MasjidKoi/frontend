@@ -81,7 +81,7 @@ export default function DashboardPage() {
   const today = new Date().toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
   return (
-    <div className="p-8 flex flex-col gap-7">
+    <div className="p-8 flex flex-col gap-6">
       {/* Top bar */}
       <div className="flex items-center justify-between">
         <div>

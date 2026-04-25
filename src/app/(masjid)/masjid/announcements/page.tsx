@@ -189,7 +189,7 @@ export default function AnnouncementsPage() {
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
                     <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#F5F5F5] text-[#555]"
+                      ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#7a5500]"
                     }`}>
                       {ann.is_published ? "Published" : "Draft"}
                     </span>

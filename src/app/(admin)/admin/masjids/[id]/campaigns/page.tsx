@@ -13,7 +13,7 @@ const PAGE_SIZE = 20;
 
 const STATUS_STYLES: Record<string, string> = {
   Active:    "bg-[#D4EDDA] text-[#155724]",
-  Completed: "bg-[#D1ECF1] text-[#0C5460]",
+  Completed: "bg-[#D4EDDA] text-[#155724]",
   Cancelled: "bg-[#FFEDED] text-[#C0392B]",
 };
 
