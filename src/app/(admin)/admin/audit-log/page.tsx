@@ -61,7 +61,7 @@ export default function AuditLogPage() {
         <p className="text-sm text-muted-foreground mt-0.5">All admin write actions — append-only, immutable</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         {/* Head */}
         <div className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
           {["Action", "Target", "Admin", "Timestamp"].map(h => (

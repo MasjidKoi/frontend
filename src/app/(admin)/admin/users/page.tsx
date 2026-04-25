@@ -30,7 +30,7 @@ interface Masjid { masjid_id: string; name: string; admin_region: string; }
 const ROLE_STYLES: Record<string, string> = {
   platform_admin: "bg-primary text-white",
   masjid_admin:   "bg-secondary text-primary",
-  madrasha_admin: "bg-[#FFF3CD] text-[#856404]",
+  madrasha_admin: "bg-[#FFF3CD] text-[#7a5500]",
 };
 
 const inviteSchema = z.object({
@@ -104,7 +104,7 @@ export default function UsersPage() {
       </div>
 
       {/* User table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-hidden">
+      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
           {["Email", "Role", "Scoped To", "Status"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -136,7 +136,7 @@ export default function UsersPage() {
               ) : <span className="text-sm text-muted-foreground">—</span>}
             </div>
             <span className="text-sm text-muted-foreground truncate">{getMasjidName(u.masjid_id)}</span>
-            <span className={`text-xs font-medium px-2 py-1 rounded-full w-fit ${u.confirmed_at ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#856404]"}`}>
+            <span className={`text-xs font-medium px-2 py-1 rounded-full w-fit ${u.confirmed_at ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#7a5500]"}`}>
               {u.confirmed_at ? "Active" : "Invited"}
             </span>
           </div>
@@ -144,7 +144,7 @@ export default function UsersPage() {
       </div>
 
       {/* Invite dialog */}
-      <Dialog open={inviteOpen} onOpenChange={setInviteOpen}>
+      <Dialog open={inviteOpen} onOpenChange={open => { if (!isSubmitting) setInviteOpen(open); }}>
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Invite Admin</DialogTitle>
@@ -159,8 +159,8 @@ export default function UsersPage() {
             </div>
 
             <div className="flex flex-col gap-1.5">
-              <Label>Role *</Label>
-              <select {...register("role")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
+              <Label htmlFor="inv-role">Role *</Label>
+              <select id="inv-role" {...register("role")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                 <option value="masjid_admin">Masjid Admin</option>
                 <option value="madrasha_admin">Madrasha Admin</option>
                 <option value="platform_admin">Platform Admin</option>
