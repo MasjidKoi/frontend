@@ -8,7 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel,
@@ -24,10 +23,13 @@ interface Announcement {
   body: string;
   is_published: boolean;
   published_at: string | null;
+  scheduled_at: string | null;
   created_at: string;
   updated_at: string;
   posted_by_email: string | null;
 }
+
+type PublishMode = "draft" | "now" | "schedule";
 
 function timeAgo(iso: string) {
   const diff = Math.floor((Date.now() - new Date(iso).getTime()) / 1000);
@@ -35,6 +37,10 @@ function timeAgo(iso: string) {
   if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
   return new Date(iso).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+}
+
+function formatScheduled(iso: string) {
+  return new Date(iso).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
 }
 
 export default function AnnouncementsPage() {
@@ -45,14 +51,17 @@ export default function AnnouncementsPage() {
   useEffect(() => {
     if (!authLoading && !user?.masjidId) router.push("/login");
   }, [authLoading, user?.masjidId, router]);
+
   const [items, setItems] = useState<Announcement[]>([]);
   const [loading, setLoading] = useState(true);
+  const [publishing, setPublishing] = useState<string | null>(null);
   const [formOpen, setFormOpen] = useState(false);
   const [editItem, setEditItem] = useState<Announcement | null>(null);
   const [deleteItem, setDeleteItem] = useState<Announcement | null>(null);
   const [formTitle, setFormTitle] = useState("");
   const [formBody, setFormBody] = useState("");
-  const [formPublish, setFormPublish] = useState(false);
+  const [publishMode, setPublishMode] = useState<PublishMode>("draft");
+  const [scheduledAt, setScheduledAt] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
@@ -73,7 +82,8 @@ export default function AnnouncementsPage() {
     setEditItem(null);
     setFormTitle("");
     setFormBody("");
-    setFormPublish(false);
+    setPublishMode("draft");
+    setScheduledAt("");
     setFormOpen(true);
   };
 
@@ -81,20 +91,30 @@ export default function AnnouncementsPage() {
     setEditItem(ann);
     setFormTitle(ann.title);
     setFormBody(ann.body);
-    setFormPublish(ann.is_published);
+    setPublishMode("draft");
+    setScheduledAt("");
     setFormOpen(true);
   };
 
   const handleSubmit = async () => {
     if (!formTitle.trim() || !formBody.trim()) { toast.error("Title and body are required"); return; }
+    if (publishMode === "schedule" && !scheduledAt) { toast.error("Please pick a date and time"); return; }
     setSubmitting(true);
     try {
       if (editItem) {
         await announcementsApi.update(id, editItem.announcement_id, { title: formTitle, body: formBody });
         toast.success("Announcement updated");
       } else {
-        await announcementsApi.create(id, { title: formTitle, body: formBody, publish: formPublish });
-        toast.success(formPublish ? "Published!" : "Draft saved");
+        const payload = {
+          title: formTitle,
+          body: formBody,
+          publish: publishMode === "now",
+          scheduled_at: publishMode === "schedule" && scheduledAt
+            ? new Date(scheduledAt).toISOString()
+            : null,
+        };
+        await announcementsApi.create(id, payload);
+        toast.success(publishMode === "now" ? "Published!" : publishMode === "schedule" ? "Scheduled!" : "Draft saved");
       }
       setFormOpen(false);
       load();
@@ -106,11 +126,13 @@ export default function AnnouncementsPage() {
   };
 
   const handlePublish = async (ann: Announcement) => {
+    setPublishing(ann.announcement_id);
     try {
       await announcementsApi.publish(id, ann.announcement_id);
       toast.success("Published!");
       load();
     } catch { toast.error("Failed to publish"); }
+    finally { setPublishing(null); }
   };
 
   const handleDelete = async () => {
@@ -121,6 +143,14 @@ export default function AnnouncementsPage() {
       setDeleteItem(null);
       load();
     } catch { toast.error("Failed to delete"); }
+  };
+
+  const submitLabel = () => {
+    if (submitting) return "Saving…";
+    if (editItem) return "Save Changes";
+    if (publishMode === "now") return "Publish";
+    if (publishMode === "schedule") return "Schedule";
+    return "Save Draft";
   };
 
   return (
@@ -139,7 +169,7 @@ export default function AnnouncementsPage() {
       {/* List */}
       {loading ? (
         <div className="flex flex-col gap-4">
-          {[1,2].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
+          {[1, 2].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : items.length === 0 ? (
         <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
@@ -148,56 +178,69 @@ export default function AnnouncementsPage() {
         </div>
       ) : (
         <div className="flex flex-col gap-4">
-          {items.map(ann => (
-            <div key={ann.announcement_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
-              <div className="flex items-start justify-between gap-4">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-foreground text-base">{ann.title}</h3>
-                  <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>
+          {items.map(ann => {
+            const isOverdue = ann.scheduled_at && new Date(ann.scheduled_at) <= new Date();
+            return (
+              <div key={ann.announcement_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+                <div className="flex items-start justify-between gap-4">
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-semibold text-foreground text-base">{ann.title}</h3>
+                    <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>
+                  </div>
+                  <div className="flex flex-col items-end gap-1.5 shrink-0">
+                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                      ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#F5F5F5] text-[#555]"
+                    }`}>
+                      {ann.is_published ? "Published" : "Draft"}
+                    </span>
+                    {!ann.is_published && ann.scheduled_at && (
+                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
+                        isOverdue ? "bg-[#FFEDED] text-[#C0392B]" : "bg-[#FFF3CD] text-[#7a5500]"
+                      }`}>
+                        Auto-publish: {formatScheduled(ann.scheduled_at)}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <span className={`text-xs font-medium px-2.5 py-1 rounded-full shrink-0 ${
-                  ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#856404]"
-                }`}>
-                  {ann.is_published ? "Published" : "Draft"}
-                </span>
-              </div>
 
-              <div className="flex items-center justify-between">
-                <p className="text-xs text-muted-foreground">
-                  {ann.is_published && ann.published_at
-                    ? `Published ${timeAgo(ann.published_at)}`
-                    : `Created ${timeAgo(ann.created_at)} · Not published`}
-                </p>
-                <div className="flex gap-2">
-                  {!ann.is_published && (
+                <div className="flex items-center justify-between">
+                  <p className="text-xs text-muted-foreground">
+                    {ann.is_published && ann.published_at
+                      ? `Published ${timeAgo(ann.published_at)}`
+                      : `Created ${timeAgo(ann.created_at)} · Not published`}
+                  </p>
+                  <div className="flex gap-2">
+                    {!ann.is_published && !ann.scheduled_at && (
+                      <button
+                        onClick={() => handlePublish(ann)}
+                        disabled={publishing === ann.announcement_id}
+                        className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      >
+                        {publishing === ann.announcement_id ? "Publishing…" : "Publish"}
+                      </button>
+                    )}
                     <button
-                      onClick={() => handlePublish(ann)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-secondary text-primary font-medium hover:bg-secondary/80 transition-colors"
+                      onClick={() => openEdit(ann)}
+                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                     >
-                      Publish
+                      <Pencil className="h-3 w-3" /> Edit
                     </button>
-                  )}
-                  <button
-                    onClick={() => openEdit(ann)}
-                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
-                  >
-                    <Pencil className="h-3 w-3" /> Edit
-                  </button>
-                  <button
-                    onClick={() => setDeleteItem(ann)}
-                    className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors flex items-center gap-1.5"
-                  >
-                    <Trash2 className="h-3 w-3" /> Delete
-                  </button>
+                    <button
+                      onClick={() => setDeleteItem(ann)}
+                      className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors flex items-center gap-1.5"
+                    >
+                      <Trash2 className="h-3 w-3" /> Delete
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
 
       {/* Create/Edit dialog */}
-      <Dialog open={formOpen} onOpenChange={setFormOpen}>
+      <Dialog open={formOpen} onOpenChange={open => { if (!submitting) setFormOpen(open); }}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
             <DialogTitle>{editItem ? "Edit Announcement" : "New Announcement"}</DialogTitle>
@@ -223,9 +266,35 @@ export default function AnnouncementsPage() {
               />
             </div>
             {!editItem && (
-              <div className="flex items-center justify-between">
-                <Label htmlFor="pub-toggle" className="cursor-pointer">Publish immediately</Label>
-                <Switch id="pub-toggle" checked={formPublish} onCheckedChange={setFormPublish} />
+              <div className="flex flex-col gap-2">
+                <Label>When to publish</Label>
+                <div className="flex gap-1 bg-muted/30 rounded-lg p-1">
+                  {(["draft", "now", "schedule"] as PublishMode[]).map(m => (
+                    <button
+                      key={m}
+                      onClick={() => setPublishMode(m)}
+                      className={`flex-1 py-1.5 rounded-md text-xs font-medium capitalize transition-colors ${
+                        publishMode === m
+                          ? "bg-white shadow-sm text-foreground"
+                          : "text-muted-foreground hover:text-foreground"
+                      }`}
+                    >
+                      {m === "now" ? "Publish Now" : m === "schedule" ? "Schedule" : "Draft"}
+                    </button>
+                  ))}
+                </div>
+                {publishMode === "schedule" && (
+                  <div className="flex flex-col gap-1.5">
+                    <Label htmlFor="schedule-dt">Date &amp; time *</Label>
+                    <Input
+                      id="schedule-dt"
+                      type="datetime-local"
+                      value={scheduledAt}
+                      onChange={e => setScheduledAt(e.target.value)}
+                      min={new Date().toISOString().slice(0, 16)}
+                    />
+                  </div>
+                )}
               </div>
             )}
             <div className="flex gap-3 justify-end pt-1">
@@ -235,7 +304,7 @@ export default function AnnouncementsPage() {
                 disabled={submitting}
                 className="bg-primary hover:bg-primary/90"
               >
-                {submitting ? "Saving…" : editItem ? "Save Changes" : formPublish ? "Publish" : "Save Draft"}
+                {submitLabel()}
               </Button>
             </div>
           </div>

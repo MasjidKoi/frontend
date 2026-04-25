@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Building2, Sun, Megaphone, LogOut } from "lucide-react";
+import { Building2, Sun, Megaphone, LogOut, CalendarDays, Landmark, Star, Users, Images } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useAuthStore } from "@/store/auth-store";
 import { masjidsApi } from "@/lib/api/masjids";
@@ -13,6 +13,11 @@ const NAV = [
   { href: "/masjid/profile",       label: "My Masjid",    icon: Building2 },
   { href: "/masjid/prayer-times",  label: "Prayer Times", icon: Sun },
   { href: "/masjid/announcements", label: "Announcements", icon: Megaphone },
+  { href: "/masjid/events",        label: "Events",       icon: CalendarDays },
+  { href: "/masjid/campaigns",     label: "Campaigns",    icon: Landmark },
+  { href: "/masjid/reviews",       label: "Reviews",      icon: Star },
+  { href: "/masjid/co-admins",     label: "Co-admins",    icon: Users },
+  { href: "/masjid/photos",        label: "Photos",       icon: Images },
 ];
 
 export default function MasjidLayout({ children }: { children: React.ReactNode }) {

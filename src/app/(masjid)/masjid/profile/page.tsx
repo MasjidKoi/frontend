@@ -17,6 +17,7 @@ interface Facilities {
   has_wudu_female: boolean; has_wheelchair_access: boolean; has_parking: boolean;
   parking_capacity: number | null; has_janazah: boolean; has_school: boolean;
   imam_name: string | null; imam_qualifications: string | null;
+  imam_languages: string | null; capacity_male: number | null; capacity_female: number | null;
 }
 interface Contact {
   phone: string | null; email: string | null; whatsapp: string | null; website_url: string | null;
@@ -200,9 +201,9 @@ export default function MasjidProfilePage() {
                   <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
                 </div>
                 <div className="flex flex-col gap-1.5">
-                  <Label>Timezone</Label>
-                  <select value={form.timezone ?? "Asia/Dhaka"} onChange={e => set("timezone", e.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none">
+                  <Label htmlFor="profile-timezone">Timezone</Label>
+                  <select id="profile-timezone" value={form.timezone ?? "Asia/Dhaka"} onChange={e => set("timezone", e.target.value)}
+                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                     <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                     <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
                     <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>
@@ -257,6 +258,20 @@ export default function MasjidProfilePage() {
                   <Label>Imam Qualifications</Label>
                   <Input value={fac.imam_qualifications ?? ""} onChange={e => setFacility("imam_qualifications", e.target.value || null)} placeholder="e.g. Al-Azhar graduate" />
                 </div>
+              </div>
+              <div className="grid grid-cols-3 gap-4 mt-1">
+                <div className="flex flex-col gap-1.5 col-span-2">
+                  <Label>Imam Languages</Label>
+                  <Input value={fac.imam_languages ?? ""} onChange={e => setFacility("imam_languages", e.target.value || null)} placeholder="Arabic, English, Bengali" />
+                </div>
+                <div className="flex flex-col gap-1.5">
+                  <Label>Capacity (Male)</Label>
+                  <Input type="number" value={fac.capacity_male ?? ""} onChange={e => setFacility("capacity_male", e.target.value ? parseInt(e.target.value) : null)} placeholder="0" />
+                </div>
+              </div>
+              <div className="flex flex-col gap-1.5 max-w-[calc(33%_-_0.25rem)] mt-0">
+                <Label>Capacity (Female)</Label>
+                <Input type="number" value={fac.capacity_female ?? ""} onChange={e => setFacility("capacity_female", e.target.value ? parseInt(e.target.value) : null)} placeholder="0" />
               </div>
             </div>
           </>
@@ -315,13 +330,16 @@ export default function MasjidProfilePage() {
                 })}
               </div>
 
-              {(mFac.imam_name || mFac.imam_qualifications || (mFac.has_parking && mFac.parking_capacity)) && (
+              {(mFac.imam_name || mFac.imam_qualifications || mFac.imam_languages || mFac.capacity_male || mFac.capacity_female || (mFac.has_parking && mFac.parking_capacity)) && (
                 <div className="border-t border-border/20 pt-4 grid grid-cols-2 gap-4">
                   {mFac.imam_name && <Field label="Imam" value={mFac.imam_name} />}
                   {mFac.imam_qualifications && <Field label="Qualifications" value={mFac.imam_qualifications} />}
+                  {mFac.imam_languages && <Field label="Languages" value={mFac.imam_languages} />}
                   {mFac.has_parking && mFac.parking_capacity && (
                     <Field label="Parking Capacity" value={`${mFac.parking_capacity} spaces`} />
                   )}
+                  {mFac.capacity_male != null && <Field label="Capacity (Male)" value={`${mFac.capacity_male}`} />}
+                  {mFac.capacity_female != null && <Field label="Capacity (Female)" value={`${mFac.capacity_female}`} />}
                 </div>
               )}
             </div>
