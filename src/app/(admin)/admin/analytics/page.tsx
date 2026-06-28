@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, startTransition } from "react";
 import { Download } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminApi } from "@/lib/api/admin";
@@ -26,7 +26,9 @@ export default function AnalyticsPage() {
   const [demoLoading, setDemoLoading] = useState(true);
 
   useEffect(() => {
-    setLoading(true);
+    startTransition(() => {
+      setLoading(true);
+    });
     adminApi.getUserGrowth(period)
       .then(res => setData(res.data ?? []))
       .catch(() => toast.error("Failed to load analytics"))
@@ -63,15 +65,15 @@ export default function AnalyticsPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between min-w-0">
+        <div className="min-w-0">
           <h1 className="font-heading text-2xl font-bold text-foreground">Analytics</h1>
           <p className="text-sm text-muted-foreground mt-0.5">User registration growth over time</p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-3 shrink-0">
           <button
             onClick={exportGrowthCSV}
             disabled={data.length === 0}
@@ -100,7 +102,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Summary strip */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />) : (<>
           <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Total Registrations</p>

@@ -50,15 +50,17 @@ function InviteAcceptInner() {
   } = useForm<FormData>({ resolver: zodResolver(schema) });
 
   useEffect(() => {
-    const parsed = parseHashTokens(window.location.hash);
-    if (!parsed) {
-      setState("invalid");
-      return;
-    }
-    setHashTokens(parsed);
-    // Clean hash from URL (don't expose token in browser history)
-    window.history.replaceState(null, "", window.location.pathname);
-    setState("form");
+    queueMicrotask(() => {
+      const parsed = parseHashTokens(window.location.hash);
+      if (!parsed) {
+        setState("invalid");
+        return;
+      }
+      setHashTokens(parsed);
+      // Clean hash from URL (don't expose token in browser history)
+      window.history.replaceState(null, "", window.location.pathname);
+      setState("form");
+    });
   }, []);
 
   const onSubmit = async ({ password }: FormData) => {

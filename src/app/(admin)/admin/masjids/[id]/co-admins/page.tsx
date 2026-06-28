@@ -32,7 +32,7 @@ export default function AdminMasjidCoAdminsPage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Co-admins</h1>
@@ -41,7 +41,7 @@ export default function AdminMasjidCoAdminsPage() {
       </div>
 
       <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
-        <div className="grid grid-cols-[2fr_1fr_120px_120px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
+        <div className="grid grid-cols-[2fr_1fr_120px_120px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[680px] md:min-w-0">
           {["Email", "Status", "Invited", "Accepted"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
           ))}
@@ -56,7 +56,7 @@ export default function AdminMasjidCoAdminsPage() {
             <p className="text-muted-foreground text-sm">No co-admin invites</p>
           </div>
         ) : invites.map(inv => (
-          <div key={inv.invite_id} className="grid grid-cols-[2fr_1fr_120px_120px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 hover:bg-muted/20 transition-colors">
+          <div key={inv.invite_id} className="grid grid-cols-[2fr_1fr_120px_120px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 hover:bg-muted/20 transition-colors min-w-[680px] md:min-w-0">
             <p className="text-sm text-foreground font-medium">{inv.invited_email}</p>
             <span className={`text-xs font-medium px-2.5 py-1 rounded-full w-fit capitalize ${STATUS_STYLES[inv.status] ?? "bg-muted text-muted-foreground"}`}>
               {inv.status}

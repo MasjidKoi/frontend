@@ -14,7 +14,7 @@ export function StatsBar() {
     <div className="w-full bg-secondary">
       <Stagger
         staggerDelay={0.08}
-        className="max-w-7xl mx-auto px-16 py-6 grid grid-cols-2 md:grid-cols-4 gap-6"
+        className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 xl:px-16 py-5 sm:py-6 grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6"
       >
         {STATS.map(({ num, label }) => (
           <StaggerItem key={label} className="flex flex-col items-center gap-1 text-center">

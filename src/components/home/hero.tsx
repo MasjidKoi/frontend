@@ -17,9 +17,9 @@ const PRAYER_TIMES = [
 export function Hero() {
   return (
     <section className="w-full bg-primary text-primary-foreground">
-      <div className="max-w-7xl mx-auto flex items-center gap-16 px-16 py-28">
+      <div className="max-w-7xl mx-auto flex flex-col lg:flex-row lg:items-center gap-10 lg:gap-16 px-4 sm:px-6 lg:px-12 xl:px-16 py-14 sm:py-20 lg:py-28">
         {/* Left — copy */}
-        <div className="flex-1 flex flex-col gap-7">
+        <div className="flex-1 flex flex-col gap-5 sm:gap-7 min-w-0">
           <HeroEntrance delay={0}>
             <Badge className="w-fit bg-accent text-secondary border-0 rounded-full px-4 py-1 text-xs font-medium">
               Now live across Bangladesh
@@ -27,23 +27,23 @@ export function Hero() {
           </HeroEntrance>
 
           <HeroEntrance delay={0.1}>
-            <h1 className="font-heading text-5xl font-bold leading-[1.1] tracking-tight text-white max-w-lg">
+            <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-[1.1] tracking-tight text-white max-w-lg">
               Connect with your nearest Masjid
             </h1>
           </HeroEntrance>
 
           <HeroEntrance delay={0.2}>
-            <p className="text-secondary/90 text-lg leading-relaxed max-w-md">
+            <p className="text-secondary/90 text-base sm:text-lg leading-relaxed max-w-md">
               Find nearby masjids, check prayer times, and stay connected with
               your community — all from one platform.
             </p>
           </HeroEntrance>
 
-          <HeroEntrance delay={0.3} className="flex items-center gap-3 pt-1">
+          <HeroEntrance delay={0.3} className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 pt-1">
             <Button
               asChild
               size="lg"
-              className="bg-secondary text-primary hover:bg-secondary/90 font-semibold px-8"
+              className="bg-secondary text-primary hover:bg-secondary/90 font-semibold px-6 sm:px-8 w-full sm:w-auto justify-center"
             >
               <Link href="/masjids">Find a Masjid</Link>
             </Button>
@@ -51,7 +51,7 @@ export function Hero() {
               asChild
               variant="outline"
               size="lg"
-              className="border-secondary/50 text-secondary bg-transparent hover:bg-accent hover:text-white hover:border-accent px-8"
+              className="border-secondary/50 text-secondary bg-transparent hover:bg-accent hover:text-white hover:border-accent px-6 sm:px-8 w-full sm:w-auto justify-center"
             >
               <Link href="/login">Admin Panel →</Link>
             </Button>

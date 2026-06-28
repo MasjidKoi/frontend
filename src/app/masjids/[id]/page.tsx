@@ -81,7 +81,7 @@ export default function PublicMasjidPage() {
 
   if (loading) return (
     <div className="min-h-screen bg-background">
-      <div className="max-w-3xl mx-auto px-6 py-12 flex flex-col gap-6">
+      <div className="max-w-3xl mx-auto px-4 sm:px-6 py-12 flex flex-col gap-6">
         <Skeleton className="h-8 w-48" />
         <Skeleton className="h-32" />
         <Skeleton className="h-48" />
@@ -102,7 +102,7 @@ export default function PublicMasjidPage() {
     <div className="min-h-screen bg-background">
       {/* Minimal nav */}
       <header className="bg-primary">
-        <div className="max-w-3xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 text-white">
             <div className="h-7 w-7 rounded-lg bg-accent flex items-center justify-center text-base font-bold">م</div>
             <span className="font-heading font-bold">MasjidKoi</span>
@@ -113,7 +113,7 @@ export default function PublicMasjidPage() {
         </div>
       </header>
 
-      <main className="max-w-3xl mx-auto px-6 py-10 flex flex-col gap-8">
+      <main className="max-w-3xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col gap-6 sm:gap-8">
         {/* Masjid header */}
         <div className="flex flex-col gap-3">
           <div className="flex items-center gap-2.5 flex-wrap">
@@ -154,20 +154,22 @@ export default function PublicMasjidPage() {
             </p>}
           </div>
           {pt ? (
-            <div className="grid grid-cols-5">
-              {PRAYERS.map(({ key, label }, i) => {
-                const azan = pt[`${key}_azan` as keyof PrayerTime] as string;
-                const iqamah = pt[`${key}_iqamah` as keyof PrayerTime] as string | null;
-                return (
-                  <div key={key} className={`px-4 py-5 flex flex-col items-center gap-2 ${i < 4 ? "border-r border-border/20" : ""}`}>
-                    <p className="text-xs text-muted-foreground font-medium">{label}</p>
-                    <p className="font-heading font-bold text-lg text-foreground font-mono">{azan}</p>
-                    {iqamah && (
-                      <p className="text-xs text-muted-foreground font-mono bg-muted rounded px-2 py-0.5">{iqamah}</p>
-                    )}
-                  </div>
-                );
-              })}
+            <div className="overflow-x-auto [-webkit-overflow-scrolling:touch] rounded-b-2xl">
+              <div className="grid grid-cols-5 min-w-[26rem] md:min-w-0 w-full divide-x divide-border/20">
+                {PRAYERS.map(({ key, label }) => {
+                  const azan = pt[`${key}_azan` as keyof PrayerTime] as string;
+                  const iqamah = pt[`${key}_iqamah` as keyof PrayerTime] as string | null;
+                  return (
+                    <div key={key} className="px-3 sm:px-4 py-5 flex flex-col items-center gap-2">
+                      <p className="text-xs text-muted-foreground font-medium">{label}</p>
+                      <p className="font-heading font-bold text-lg text-foreground font-mono">{azan}</p>
+                      {iqamah && (
+                        <p className="text-xs text-muted-foreground font-mono bg-muted rounded px-2 py-0.5">{iqamah}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           ) : (
             <p className="px-5 py-8 text-sm text-muted-foreground text-center">Prayer times not available</p>

@@ -51,7 +51,7 @@ export default function AdminMasjidCampaignsPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div>
         <h1 className="font-heading text-2xl font-bold text-foreground">Campaigns</h1>
         <p className="text-sm text-muted-foreground mt-0.5">Fundraising campaigns for this masjid</p>
@@ -130,7 +130,7 @@ export default function AdminMasjidCampaignsPage() {
             <p className="text-sm text-muted-foreground mt-2">No analytics data</p>
           ) : (
             <div className="flex flex-col gap-3 mt-2">
-              <div className="grid grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div className="bg-muted/30 rounded-lg p-3 text-center">
                   <p className="text-lg font-bold text-foreground">৳{parseFloat(analytics.raised_amount).toLocaleString()}</p>
                   <p className="text-xs text-muted-foreground">Raised</p>

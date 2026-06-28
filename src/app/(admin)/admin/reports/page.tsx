@@ -65,7 +65,7 @@ export default function ReportsPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Masjid Reports</h1>
@@ -74,7 +74,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Filter */}
-      <div className="flex gap-3">
+      <div className="flex flex-col sm:flex-row gap-3">
         <div className="relative">
           <select
             value={statusFilter}
@@ -90,7 +90,7 @@ export default function ReportsPage() {
 
       {/* Table */}
       <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
-        <div className="grid grid-cols-[1fr_2fr_1fr_120px_200px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
+        <div className="grid grid-cols-[1fr_2fr_1fr_120px_200px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[900px] md:min-w-0">
           {["Field", "Description", "Status", "Submitted", "Actions"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
           ))}
@@ -107,7 +107,7 @@ export default function ReportsPage() {
         ) : items.map(r => {
           const busy = updating.has(r.report_id);
           return (
-            <div key={r.report_id} className="grid grid-cols-[1fr_2fr_1fr_120px_200px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 hover:bg-muted/20 transition-colors">
+            <div key={r.report_id} className="grid grid-cols-[1fr_2fr_1fr_120px_200px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 hover:bg-muted/20 transition-colors min-w-[900px] md:min-w-0">
               <p className="text-sm font-medium text-foreground truncate">{r.field_name}</p>
               <p className="text-sm text-muted-foreground line-clamp-2">{r.description}</p>
               <span className={`text-xs font-medium px-2.5 py-1 rounded-full w-fit ${STATUS_STYLES[r.status] ?? "bg-muted text-muted-foreground"}`}>

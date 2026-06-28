@@ -2,7 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { ArrowLeft, BadgeCheck, Save, AlertTriangle } from "lucide-react";
+import { BadgeCheck, Save, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -227,7 +227,7 @@ export default function MasjidDetailPage() {
   };
 
   if (loading) return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <Skeleton className="h-8 w-64" />
       <div className="flex gap-5">
         <div className="flex-1 flex flex-col gap-5"><Skeleton className="h-64" /><Skeleton className="h-96" /></div>
@@ -236,16 +236,16 @@ export default function MasjidDetailPage() {
     </div>
   );
 
-  if (!masjid) return <div className="p-8 text-muted-foreground">Masjid not found</div>;
+  if (!masjid) return <div className="p-4 sm:p-6 md:p-8 text-muted-foreground">Masjid not found</div>;
 
   const fac = (form.facilities ?? {}) as Partial<Facilities>;
   const con = (form.contact ?? {}) as Partial<Contact>;
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div className="w-40" />
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="hidden lg:block w-40" />
         <h1 className="font-heading text-2xl font-bold text-foreground">{masjid.name}</h1>
         <Button
           onClick={handleSave}
@@ -258,7 +258,7 @@ export default function MasjidDetailPage() {
       </div>
 
       {/* Two-column layout */}
-      <div className="flex flex-col lg:flex-row gap-5 items-start">
+      <div className="flex flex-col lg:flex-row gap-5 items-stretch lg:items-start">
         {/* Left column */}
         <div className="flex-1 flex flex-col gap-5">
 
@@ -276,7 +276,7 @@ export default function MasjidDetailPage() {
               <Input value={form.address ?? ""} onChange={e => set("address", e.target.value)} />
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label>Admin Region</Label>
                 <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
@@ -296,7 +296,7 @@ export default function MasjidDetailPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label>Phone</Label>
                 <Input value={con.phone ?? ""} onChange={e => setContact("phone", e.target.value)} placeholder="+880..." />
@@ -307,7 +307,7 @@ export default function MasjidDetailPage() {
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label>WhatsApp</Label>
                 <Input value={con.whatsapp ?? ""} onChange={e => setContact("whatsapp", e.target.value)} placeholder="+880..." />
@@ -344,12 +344,12 @@ export default function MasjidDetailPage() {
                   value={fac.parking_capacity ?? ""}
                   onChange={e => setFacility("parking_capacity", e.target.value ? parseInt(e.target.value) : null)}
                   placeholder="Number of spaces"
-                  className="w-40"
+                  className="w-full sm:w-40"
                 />
               </div>
             )}
 
-            <div className="grid grid-cols-2 gap-4 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
               <div className="flex flex-col gap-1.5">
                 <Label>Imam Name</Label>
                 <Input value={fac.imam_name ?? ""} onChange={e => setFacility("imam_name", e.target.value || null)} placeholder="Sheikh..." />
@@ -413,7 +413,8 @@ export default function MasjidDetailPage() {
           <div className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-4">
             <h2 className="font-semibold text-foreground text-sm">Today&apos;s Prayer Times</h2>
             {prayerTimes ? (
-              <div className="grid grid-cols-5 gap-1">
+              <div className="overflow-x-auto [-webkit-overflow-scrolling:touch] -mx-1">
+                <div className="grid grid-cols-5 gap-1 min-w-[18rem] md:min-w-0 w-full">
                 {[
                   { name: "Fajr", time: prayerTimes.fajr_azan },
                   { name: "Dhuhr", time: prayerTimes.dhuhr_azan },
@@ -421,11 +422,12 @@ export default function MasjidDetailPage() {
                   { name: "Maghrib", time: prayerTimes.maghrib_azan },
                   { name: "Isha", time: prayerTimes.isha_azan },
                 ].map(p => (
-                  <div key={p.name} className="flex flex-col items-center gap-1">
+                  <div key={p.name} className="flex flex-col items-center gap-1 px-0.5">
                     <span className="text-[10px] text-muted-foreground">{p.name}</span>
                     <span className="text-xs font-bold text-foreground font-mono">{p.time}</span>
                   </div>
                 ))}
+                </div>
               </div>
             ) : (
               <p className="text-xs text-muted-foreground">No prayer times set</p>

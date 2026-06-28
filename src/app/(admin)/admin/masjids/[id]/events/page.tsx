@@ -50,7 +50,7 @@ export default function AdminMasjidEventsPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div>
         <h1 className="font-heading text-2xl font-bold text-foreground">Events</h1>
         <p className="text-sm text-muted-foreground mt-0.5">All events for this masjid</p>

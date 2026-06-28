@@ -55,7 +55,7 @@ export default function AuditLogPage() {
   useEffect(() => { load(); }, [load]);
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div>
         <h1 className="font-heading text-2xl font-bold text-foreground">Audit Log</h1>
         <p className="text-sm text-muted-foreground mt-0.5">All admin write actions — append-only, immutable</p>
@@ -63,7 +63,7 @@ export default function AuditLogPage() {
 
       <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         {/* Head */}
-        <div className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
+        <div className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[640px] md:min-w-0">
           {["Action", "Target", "Admin", "Timestamp"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
           ))}
@@ -76,7 +76,7 @@ export default function AuditLogPage() {
         ) : entries.length === 0 ? (
           <p className="px-5 py-12 text-sm text-muted-foreground text-center">No audit entries yet</p>
         ) : entries.map(e => (
-          <div key={e.log_id} className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0">
+          <div key={e.log_id} className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 min-w-[640px] md:min-w-0">
             <div className="flex items-center gap-2.5">
               <span className={`h-2 w-2 rounded-full shrink-0 ${ACTION_COLOR[e.action] ? "" : "bg-accent"}`}
                 style={{ backgroundColor: ACTION_COLOR[e.action] ? undefined : undefined }}

@@ -134,14 +134,14 @@ export default function MasjidProfilePage() {
   };
 
   if (authLoading || loading) return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <Skeleton className="h-8 w-64" />
       <Skeleton className="h-56" />
       <Skeleton className="h-72" />
     </div>
   );
 
-  if (!masjid) return <div className="p-8 text-muted-foreground">Masjid not found</div>;
+  if (!masjid) return <div className="p-4 sm:p-6 md:p-8 text-muted-foreground">Masjid not found</div>;
 
   const fac = (form.facilities ?? {}) as Partial<Facilities>;
   const con = (form.contact ?? {}) as Partial<Contact>;
@@ -149,7 +149,7 @@ export default function MasjidProfilePage() {
   const mCon = (masjid.contact ?? {}) as Partial<Contact>;
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -195,7 +195,7 @@ export default function MasjidProfilePage() {
                 <Label>Full Address</Label>
                 <Input value={form.address ?? ""} onChange={e => set("address", e.target.value)} />
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label>Admin Region</Label>
                   <Input value={form.admin_region ?? ""} onChange={e => set("admin_region", e.target.value)} />
@@ -210,7 +210,7 @@ export default function MasjidProfilePage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label>Phone</Label>
                   <Input value={con.phone ?? ""} onChange={e => setContact("phone", e.target.value)} placeholder="+880..." />
@@ -220,7 +220,7 @@ export default function MasjidProfilePage() {
                   <Input type="email" value={con.email ?? ""} onChange={e => setContact("email", e.target.value)} placeholder="contact@masjid.com" />
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="flex flex-col gap-1.5">
                   <Label>WhatsApp</Label>
                   <Input value={con.whatsapp ?? ""} onChange={e => setContact("whatsapp", e.target.value)} placeholder="+880..." />
@@ -246,10 +246,10 @@ export default function MasjidProfilePage() {
               {fac.has_parking && (
                 <div className="flex flex-col gap-1.5 mt-1">
                   <Label>Parking Capacity</Label>
-                  <Input type="number" value={fac.parking_capacity ?? ""} onChange={e => setFacility("parking_capacity", e.target.value ? parseInt(e.target.value) : null)} placeholder="Number of spaces" className="w-40" />
+                  <Input type="number" value={fac.parking_capacity ?? ""} onChange={e => setFacility("parking_capacity", e.target.value ? parseInt(e.target.value) : null)} placeholder="Number of spaces" className="w-full sm:w-40" />
                 </div>
               )}
-              <div className="grid grid-cols-2 gap-4 mt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-1">
                 <div className="flex flex-col gap-1.5">
                   <Label>Imam Name</Label>
                   <Input value={fac.imam_name ?? ""} onChange={e => setFacility("imam_name", e.target.value || null)} placeholder="Sheikh..." />
@@ -259,7 +259,7 @@ export default function MasjidProfilePage() {
                   <Input value={fac.imam_qualifications ?? ""} onChange={e => setFacility("imam_qualifications", e.target.value || null)} placeholder="e.g. Al-Azhar graduate" />
                 </div>
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-1">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mt-1">
                 <div className="flex flex-col gap-1.5 col-span-2">
                   <Label>Imam Languages</Label>
                   <Input value={fac.imam_languages ?? ""} onChange={e => setFacility("imam_languages", e.target.value || null)} placeholder="Arabic, English, Bengali" />
@@ -269,7 +269,7 @@ export default function MasjidProfilePage() {
                   <Input type="number" value={fac.capacity_male ?? ""} onChange={e => setFacility("capacity_male", e.target.value ? parseInt(e.target.value) : null)} placeholder="0" />
                 </div>
               </div>
-              <div className="flex flex-col gap-1.5 max-w-[calc(33%_-_0.25rem)] mt-0">
+              <div className="flex flex-col gap-1.5 w-full sm:max-w-[calc(33%_-_0.25rem)] mt-0">
                 <Label>Capacity (Female)</Label>
                 <Input type="number" value={fac.capacity_female ?? ""} onChange={e => setFacility("capacity_female", e.target.value ? parseInt(e.target.value) : null)} placeholder="0" />
               </div>
@@ -285,7 +285,7 @@ export default function MasjidProfilePage() {
               <Field label="Masjid Name" value={masjid.name} />
               <Field label="Full Address" value={masjid.address} />
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <Field label="Admin Region" value={masjid.admin_region} />
                 <Field label="Timezone" value={masjid.timezone} />
               </div>
@@ -294,12 +294,12 @@ export default function MasjidProfilePage() {
                 <>
                   <div className="border-t border-border/20 pt-4">
                     <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-3">Contact</p>
-                    <div className="grid grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                       <Field label="Phone" value={mCon.phone} />
                       <Field label="Email" value={mCon.email} />
                     </div>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <Field label="WhatsApp" value={mCon.whatsapp} />
                     <Field label="Website" value={mCon.website_url} />
                   </div>
@@ -331,7 +331,7 @@ export default function MasjidProfilePage() {
               </div>
 
               {(mFac.imam_name || mFac.imam_qualifications || mFac.imam_languages || mFac.capacity_male || mFac.capacity_female || (mFac.has_parking && mFac.parking_capacity)) && (
-                <div className="border-t border-border/20 pt-4 grid grid-cols-2 gap-4">
+                <div className="border-t border-border/20 pt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
                   {mFac.imam_name && <Field label="Imam" value={mFac.imam_name} />}
                   {mFac.imam_qualifications && <Field label="Qualifications" value={mFac.imam_qualifications} />}
                   {mFac.imam_languages && <Field label="Languages" value={mFac.imam_languages} />}

@@ -12,6 +12,7 @@ const TABS = [
   { label: "Announcements", path: "/announcements" },
   { label: "Events",        path: "/events" },
   { label: "Campaigns",     path: "/campaigns" },
+  { label: "Donations",     path: "/donations" },
   { label: "Reviews",       path: "/reviews" },
   { label: "Co-admins",     path: "/co-admins" },
   { label: "Photos",        path: "/photos" },
@@ -32,7 +33,7 @@ export default function MasjidSubLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex flex-col h-full">
       {/* Sub-header */}
-      <div className="bg-white border-b border-border/30 px-8 pt-6 pb-0 flex flex-col gap-4">
+      <div className="bg-white border-b border-border/30 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 pb-0 flex flex-col gap-3 sm:gap-4 min-w-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/admin/masjids")}
@@ -45,27 +46,29 @@ export default function MasjidSubLayout({ children }: { children: React.ReactNod
           <span className="text-sm font-medium text-foreground truncate max-w-xs">{name}</span>
         </div>
 
-        {/* Tabs */}
-        <div className="flex gap-0">
-          {TABS.map(({ label, path }) => {
-            const href = `/admin/masjids/${id}${path}`;
-            const active = path === ""
-              ? pathname === `/admin/masjids/${id}`
-              : pathname.startsWith(href);
-            return (
-              <Link
-                key={path}
-                href={href}
-                className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
-                  active
-                    ? "border-primary text-primary"
-                    : "border-transparent text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                {label}
-              </Link>
-            );
-          })}
+        {/* Tabs — scroll horizontally on narrow screens */}
+        <div className="-mx-4 sm:-mx-6 md:-mx-8 px-4 sm:px-6 md:px-8 min-w-0">
+          <div className="flex gap-0 overflow-x-auto pb-px [-webkit-overflow-scrolling:touch]">
+            {TABS.map(({ label, path }) => {
+              const href = `/admin/masjids/${id}${path}`;
+              const active = path === ""
+                ? pathname === `/admin/masjids/${id}`
+                : pathname.startsWith(href);
+              return (
+                <Link
+                  key={path}
+                  href={href}
+                  className={`shrink-0 whitespace-nowrap px-3 sm:px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+                    active
+                      ? "border-primary text-primary"
+                      : "border-transparent text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {label}
+                </Link>
+              );
+            })}
+          </div>
         </div>
       </div>
 

@@ -23,6 +23,31 @@ const schema = z.object({
 });
 type FormData = z.infer<typeof schema>;
 
+function MasjidFormField({
+  id,
+  label,
+  error,
+  required,
+  children,
+}: {
+  id: string;
+  label: string;
+  error?: string;
+  required?: boolean;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flex flex-col gap-1.5">
+      <Label htmlFor={id} className="text-sm font-medium">
+        {label}
+        {required && " *"}
+      </Label>
+      {children}
+      {error && <p className="text-xs text-destructive">{error}</p>}
+    </div>
+  );
+}
+
 export default function CreateMasjidPage() {
   const router = useRouter();
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>({
@@ -59,27 +84,18 @@ export default function CreateMasjidPage() {
     }
   };
 
-  const Field = ({ id, label, error, required, children }: { id: string; label: string; error?: string; required?: boolean; children: React.ReactNode }) => (
-    <div className="flex flex-col gap-1.5">
-      <Label htmlFor={id} className="text-sm font-medium">{label}{required && " *"}</Label>
-      {children}
-      {error && <p className="text-xs text-destructive">{error}</p>}
-    </div>
-  );
-
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <button onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
+      <div className="flex flex-col gap-3">
+        <button type="button" onClick={() => router.back()} className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors self-start">
           <ArrowLeft className="h-4 w-4" /> Back to Masjids
         </button>
-        <h1 className="font-heading text-2xl font-bold text-foreground">Create Masjid Account</h1>
-        <div className="w-36" />
+        <h1 className="font-heading text-xl sm:text-2xl font-bold text-foreground">Create Masjid Account</h1>
       </div>
 
       {/* Form card */}
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-sm border border-border/30 p-8 flex flex-col gap-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-sm border border-border/30 p-4 sm:p-6 md:p-8 flex flex-col gap-6 md:gap-8">
 
         {/* Basic Info */}
         <div className="flex flex-col gap-5">
@@ -87,25 +103,25 @@ export default function CreateMasjidPage() {
             <h2 className="font-semibold text-foreground">Basic Information</h2>
             <div className="h-px bg-border/50 mt-3" />
           </div>
-          <div className="grid grid-cols-[1fr_220px] gap-5">
-            <Field id="name" label="Masjid Name" error={errors.name?.message} required>
+          <div className="grid grid-cols-1 md:grid-cols-[1fr_220px] gap-5">
+            <MasjidFormField id="name" label="Masjid Name" error={errors.name?.message} required>
               <Input id="name" placeholder="Official masjid name" {...register("name")} className={errors.name ? "border-destructive" : ""} />
-            </Field>
-            <Field id="admin_region" label="Admin Region" error={errors.admin_region?.message} required>
+            </MasjidFormField>
+            <MasjidFormField id="admin_region" label="Admin Region" error={errors.admin_region?.message} required>
               <Input id="admin_region" placeholder="e.g. Dhaka" {...register("admin_region")} className={errors.admin_region ? "border-destructive" : ""} />
-            </Field>
+            </MasjidFormField>
           </div>
-          <Field id="address" label="Full Address" error={errors.address?.message} required>
+          <MasjidFormField id="address" label="Full Address" error={errors.address?.message} required>
             <Input id="address" placeholder="Street address, area, city" {...register("address")} className={errors.address ? "border-destructive" : ""} />
-          </Field>
-          <div className="w-64">
-            <Field id="timezone" label="Timezone">
+          </MasjidFormField>
+          <div className="w-full sm:max-w-xs">
+            <MasjidFormField id="timezone" label="Timezone">
               <select id="timezone" {...register("timezone")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                 <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                 <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
                 <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>
               </select>
-            </Field>
+            </MasjidFormField>
           </div>
         </div>
 
@@ -116,19 +132,19 @@ export default function CreateMasjidPage() {
             <div className="h-px bg-border/50 mt-3" />
           </div>
           <p className="text-sm text-muted-foreground -mt-2">Used for the nearby masjid search. Enter precise decimal coordinates.</p>
-          <div className="grid grid-cols-2 gap-5">
-            <Field id="latitude" label="Latitude" error={errors.latitude?.message} required>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <MasjidFormField id="latitude" label="Latitude" error={errors.latitude?.message} required>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input id="latitude" placeholder="23.7259" {...register("latitude")} className={`pl-9 font-mono ${errors.latitude ? "border-destructive" : ""}`} />
               </div>
-            </Field>
-            <Field id="longitude" label="Longitude" error={errors.longitude?.message} required>
+            </MasjidFormField>
+            <MasjidFormField id="longitude" label="Longitude" error={errors.longitude?.message} required>
               <div className="relative">
                 <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                 <Input id="longitude" placeholder="90.4068" {...register("longitude")} className={`pl-9 font-mono ${errors.longitude ? "border-destructive" : ""}`} />
               </div>
-            </Field>
+            </MasjidFormField>
           </div>
         </div>
 
@@ -138,9 +154,9 @@ export default function CreateMasjidPage() {
             <h2 className="font-semibold text-foreground">Admin Invitation</h2>
             <div className="h-px bg-border/50 mt-3" />
           </div>
-          <Field id="admin_email" label="Masjid Admin Email" error={errors.admin_email?.message}>
+          <MasjidFormField id="admin_email" label="Masjid Admin Email" error={errors.admin_email?.message}>
             <Input id="admin_email" type="email" placeholder="imam@masjid.com" {...register("admin_email")} className={errors.admin_email ? "border-destructive" : ""} />
-          </Field>
+          </MasjidFormField>
           <div className="flex items-start gap-2.5 bg-secondary/50 rounded-lg p-3.5">
             <Info className="h-4 w-4 text-accent mt-0.5 shrink-0" />
             <p className="text-sm text-secondary-foreground">An invite email will be sent via Brevo. The admin sets their password on first login.</p>
@@ -148,7 +164,7 @@ export default function CreateMasjidPage() {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 pt-2">
+        <div className="flex flex-wrap justify-end gap-3 pt-2">
           <Button type="button" variant="outline" onClick={() => router.back()}>Cancel</Button>
           <Button type="submit" disabled={isSubmitting} className="bg-primary hover:bg-primary/90 gap-2">
             <Plus className="h-4 w-4" />

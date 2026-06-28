@@ -55,7 +55,7 @@ export default function MasjidsListPage() {
     <div className="min-h-screen bg-background">
       {/* Nav */}
       <header className="sticky top-0 z-10 bg-primary shadow-sm">
-        <div className="max-w-5xl mx-auto px-6 h-14 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 text-white">
             <div className="h-7 w-7 rounded-lg bg-accent flex items-center justify-center text-base font-bold">
               م
@@ -71,7 +71,7 @@ export default function MasjidsListPage() {
         </div>
       </header>
 
-      <main className="max-w-5xl mx-auto px-6 py-10 flex flex-col gap-8">
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-8 sm:py-10 flex flex-col gap-6 sm:gap-8">
         {/* Page header */}
         <div className="flex flex-col gap-2">
           <h1 className="font-heading text-3xl font-bold text-foreground">

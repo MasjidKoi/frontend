@@ -7,9 +7,9 @@ import { FadeUp } from "@/components/animations/fade-up";
 export function CtaSection() {
   return (
     <section className="w-full bg-primary py-20">
-      <div className="max-w-3xl mx-auto px-8 flex flex-col items-center gap-6 text-center">
+      <div className="max-w-3xl mx-auto px-4 sm:px-8 flex flex-col items-center gap-6 text-center">
         <FadeUp className="flex flex-col items-center gap-4">
-          <h2 className="font-heading text-4xl font-bold text-white leading-tight">
+          <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight px-1">
             Ready to connect your community?
           </h2>
           <p className="text-secondary/80 text-base leading-relaxed max-w-md">
@@ -17,11 +17,11 @@ export function CtaSection() {
           </p>
         </FadeUp>
 
-        <FadeUp delay={0.15} className="flex items-center gap-3 pt-2">
+        <FadeUp delay={0.15} className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 pt-2 w-full max-w-md sm:max-w-none">
           <Button
             asChild
             size="lg"
-            className="bg-secondary text-primary hover:bg-secondary/90 font-semibold px-8"
+            className="bg-secondary text-primary hover:bg-secondary/90 font-semibold px-6 sm:px-8 w-full sm:w-auto justify-center"
           >
             <Link href="/login">Register Your Masjid</Link>
           </Button>
@@ -29,7 +29,7 @@ export function CtaSection() {
             asChild
             variant="outline"
             size="lg"
-            className="border-secondary/40 text-secondary bg-transparent hover:bg-accent hover:border-accent hover:text-white px-8"
+            className="border-secondary/40 text-secondary bg-transparent hover:bg-accent hover:border-accent hover:text-white px-6 sm:px-8 w-full sm:w-auto justify-center"
           >
             <Link href="/masjids">Explore Masjids</Link>
           </Button>

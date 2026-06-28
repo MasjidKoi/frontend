@@ -85,7 +85,7 @@ export default function SettingsPage() {
   };
 
   if (loading) return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <Skeleton className="h-8 w-48" />
       <Skeleton className="h-32 rounded-xl" />
       <Skeleton className="h-48 rounded-xl" />
@@ -93,14 +93,14 @@ export default function SettingsPage() {
     </div>
   );
 
-  if (!form) return <div className="p-8 text-muted-foreground">Failed to load settings</div>;
+  if (!form) return <div className="p-4 sm:p-6 md:p-8 text-muted-foreground">Failed to load settings</div>;
 
   const countries = parseCountries(form.supported_countries_raw);
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Platform Settings</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Configure platform-wide defaults and feature flags</p>
@@ -132,7 +132,7 @@ export default function SettingsPage() {
       {/* Prayer Defaults */}
       <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Prayer Defaults for New Masjids</h2>
-        <div className="grid grid-cols-2 gap-4 max-w-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
           <div className="flex flex-col gap-1.5">
             <Label>Default Madhab</Label>
             <select
@@ -253,7 +253,7 @@ export default function SettingsPage() {
             value={form.terms_version ?? ""}
             onChange={e => set("terms_version", e.target.value || null)}
             placeholder="1.0"
-            className="w-32"
+            className="w-full sm:w-32"
           />
         </div>
         <div className="flex flex-col gap-1.5">

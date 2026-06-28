@@ -71,6 +71,15 @@ export const ENDPOINTS = {
     delete:      (masjidId: string, id: string) => `/masjids/${masjidId}/announcements/${id}`,
   },
 
+  donations: {
+    // masjid_admin sees own masjid; platform_admin sees any (both 403-gated server-side)
+    masjidDonations: (mid: string) => `/admin/masjids/${mid}/donations`,
+    masjidBalance:   (mid: string) => `/admin/masjids/${mid}/balance`,
+    balances:        "/admin/balances",
+    disbursements:   (mid: string) => `/admin/masjids/${mid}/disbursements`,
+    refund:          (id: string) => `/admin/donations/${id}/refund`,
+  },
+
   admin: {
     stats:         "/admin/stats",
     auditLog:      "/admin/audit-log",

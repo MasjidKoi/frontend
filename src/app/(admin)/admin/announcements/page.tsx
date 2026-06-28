@@ -154,7 +154,7 @@ export default function PlatformAnnouncementsPage() {
   const totalPages = Math.ceil(total / PAGE_SIZE);
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
