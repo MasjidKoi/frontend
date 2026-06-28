@@ -94,7 +94,7 @@ function LoginForm() {
       </div>
 
       {/* Right panel — form */}
-      <div className="flex-1 flex items-center justify-center px-8 py-12">
+      <div className="flex-1 flex items-center justify-center px-4 sm:px-8 py-12">
         <div className="w-full max-w-sm flex flex-col gap-8">
           <div className="flex flex-col gap-2">
             <h1 className="font-heading text-2xl font-bold text-foreground">Welcome back</h1>

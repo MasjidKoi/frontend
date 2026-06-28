@@ -96,7 +96,7 @@ export default function PhotosPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Photos</h1>
@@ -116,7 +116,7 @@ export default function PhotosPage() {
       </div>
 
       {loading ? (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="aspect-video rounded-xl" />)}
         </div>
       ) : photos.length === 0 ? (
@@ -130,7 +130,7 @@ export default function PhotosPage() {
           </button>
         </div>
       ) : (
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {photos.map((photo, index) => (
             <div key={photo.photo_id} className="group relative rounded-xl overflow-hidden border border-border/30 shadow-sm bg-white">
               {/* eslint-disable-next-line @next/next/no-img-element */}

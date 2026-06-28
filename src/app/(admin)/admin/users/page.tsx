@@ -92,8 +92,8 @@ export default function UsersPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
-      <div className="flex items-center justify-between">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
+      <div className="flex flex-wrap gap-3 items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">User Management</h1>
           <p className="text-sm text-muted-foreground mt-0.5">All admin accounts — platform, masjid and madrasha</p>
@@ -105,7 +105,7 @@ export default function UsersPage() {
 
       {/* User table */}
       <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
-        <div className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30">
+        <div className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[640px] md:min-w-0">
           {["Email", "Role", "Scoped To", "Status"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
           ))}
@@ -121,7 +121,7 @@ export default function UsersPage() {
             <button onClick={() => setInviteOpen(true)} className="text-accent text-sm hover:underline mt-1">Invite the first admin →</button>
           </div>
         ) : users.map(u => (
-          <div key={u.id} className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0">
+          <div key={u.id} className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 min-w-[640px] md:min-w-0">
             <div className="flex items-center gap-2.5">
               <div className="h-7 w-7 rounded-full bg-secondary flex items-center justify-center text-xs font-bold text-primary shrink-0">
                 {u.email?.[0]?.toUpperCase() ?? "?"}

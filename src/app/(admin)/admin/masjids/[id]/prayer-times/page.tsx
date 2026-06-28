@@ -154,19 +154,19 @@ export default function PrayerTimesPage() {
     new Date(iso).toLocaleDateString("en-US", { weekday: "short", day: "numeric", month: "short", year: "numeric" });
 
   if (loading) return (
-    <div className="p-8 flex flex-col gap-5">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-5">
       <Skeleton className="h-8 w-80" />
-      <div className="grid grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
         {[1,2,3,4,5].map(i => <Skeleton key={i} className="h-44" />)}
       </div>
     </div>
   );
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between min-w-0">
+        <div className="min-w-0">
           <h1 className="font-heading text-2xl font-bold text-foreground">Prayer Times</h1>
           {entry && (
             <p className="text-sm text-muted-foreground mt-0.5">
@@ -174,7 +174,7 @@ export default function PrayerTimesPage() {
             </p>
           )}
         </div>
-        <div className="flex gap-3">
+        <div className="flex flex-wrap gap-2 sm:gap-3 shrink-0">
           <Button
             variant="outline"
             onClick={handleRecalc}
@@ -197,7 +197,7 @@ export default function PrayerTimesPage() {
 
       {/* 5 prayer cards */}
       {entry ? (
-        <div className="grid grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-4">
           {PRAYERS.map(({ key, label }, i) => {
             const isFirst = i === 0;
             const isEditingAzan = editingAzan === key;
@@ -275,7 +275,7 @@ export default function PrayerTimesPage() {
           })}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-border/30 p-8 text-center">
+        <div className="bg-white rounded-xl border border-border/30 p-4 sm:p-6 md:p-8 text-center">
           <p className="text-muted-foreground text-sm">No prayer times for today. Click Recalculate to generate.</p>
         </div>
       )}
@@ -283,7 +283,7 @@ export default function PrayerTimesPage() {
       {/* Jumu'ah Schedule */}
       <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Jumu&apos;ah Schedule</h2>
-        <div className="grid grid-cols-2 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {[
             { key: "khutbah_1_azan", label: "1st Khutbah Azan" },
             { key: "khutbah_1_start", label: "1st Khutbah Start" },
@@ -296,7 +296,7 @@ export default function PrayerTimesPage() {
                 value={jumahForm[key] ?? ""}
                 onChange={e => { setJumahForm(p => ({ ...p, [key]: e.target.value })); setDirty(true); }}
                 placeholder="HH:MM"
-                className="font-mono w-32"
+                className="font-mono w-full sm:w-32"
               />
             </div>
           ))}

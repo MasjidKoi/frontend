@@ -136,7 +136,7 @@ export default function CampaignsPage() {
   };
 
   return (
-    <div className="p-8 flex flex-col gap-6">
+    <div className="p-4 sm:p-6 md:p-8 flex flex-col gap-6">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="font-heading text-2xl font-bold text-foreground">Campaigns</h1>
@@ -231,7 +231,7 @@ export default function CampaignsPage() {
               <Label>Description</Label>
               <Textarea value={form.description} onChange={e => setForm(f => ({ ...f, description: e.target.value }))} rows={2} className="resize-none" placeholder="What is this campaign for?" />
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label>Target Amount (BDT) *</Label>
                 <Input type="number" value={form.target_amount} onChange={e => setForm(f => ({ ...f, target_amount: e.target.value }))} placeholder="0.00" min={0} step="0.01" />
@@ -248,7 +248,7 @@ export default function CampaignsPage() {
                 </div>
               )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="flex flex-col gap-1.5">
                 <Label>Start Date *</Label>
                 <Input type="date" value={form.start_date} onChange={e => setForm(f => ({ ...f, start_date: e.target.value }))} />
@@ -284,7 +284,7 @@ export default function CampaignsPage() {
               {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-12 rounded-lg" />)}
             </div>
           ) : analytics ? (
-            <div className="grid grid-cols-2 gap-3 mt-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mt-2">
               {[
                 { label: "Status", value: analytics.status },
                 { label: "Donors", value: String(analytics.donor_count) },
