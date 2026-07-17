@@ -11,15 +11,19 @@ async function handler(req: NextRequest, { params }: { params: Promise<{ path: s
   const cookieStore = await cookies();
   const token = cookieStore.get(TOKEN_COOKIE)?.value;
 
+  // Forward the caller's actual Content-Type instead of hardcoding JSON, so
+  // multipart/form-data uploads (photos, bulk-import) keep their boundary and
+  // aren't mislabeled/mis-parsed by the backend.
+  const contentType = req.headers.get("content-type");
   const headers: HeadersInit = {
-    "Content-Type": "application/json",
+    ...(contentType ? { "Content-Type": contentType } : {}),
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   };
 
-  let body: string | undefined;
+  let body: ArrayBuffer | undefined;
   if (req.method !== "GET" && req.method !== "HEAD") {
     try {
-      body = await req.text();
+      body = await req.arrayBuffer();
     } catch {
       body = undefined;
     }

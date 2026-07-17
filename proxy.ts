@@ -14,7 +14,16 @@ interface ParsedToken {
   exp?: number;
 }
 
-/** Decode a JWT payload without verification — Edge runtime safe (no npm packages). */
+/**
+ * Decode a JWT payload WITHOUT verifying its signature — Edge runtime safe.
+ *
+ * SECURITY: because the signature is not checked, the role/aal claims derived
+ * here are forgeable and this gate must NOT be treated as the authorization
+ * boundary — it only decides which SPA shell to render. The FastAPI backend
+ * verifies the signature on every data request, which is the real gate.
+ * Hardening TODO: verify the signature against the backend JWKS/secret using
+ * `jose` (Edge-compatible) before trusting any claim.
+ */
 function parseToken(token: string): ParsedToken | null {
   try {
     const parts = token.split(".");
@@ -28,7 +37,10 @@ function parseToken(token: string): ParsedToken | null {
 }
 
 function isExpired(payload: ParsedToken): boolean {
-  if (!payload.exp) return false;
+  // A token with no exp claim is not trustworthy — treat it as expired so a
+  // forged/unbounded token can't linger. (Signature is still NOT verified here;
+  // see the security note on parseToken.)
+  if (!payload.exp) return true;
   return Date.now() >= payload.exp * 1000;
 }
 
@@ -39,8 +51,9 @@ export function proxy(request: NextRequest) {
   const decoded = tokenValue ? parseToken(tokenValue) : null;
   const isValidToken = decoded && !isExpired(decoded);
 
-  // Use exact prefix matching to avoid /masjids (public) being caught by /masjid
-  const isAdminRoute = pathname.startsWith("/admin");
+  // Use exact prefix matching to avoid /masjids (public) being caught by /masjid,
+  // and to avoid a hypothetical /admin-* route being caught by /admin.
+  const isAdminRoute = pathname.startsWith("/admin/") || pathname === "/admin";
   const isMasjidRoute = pathname.startsWith("/masjid/") || pathname === "/masjid";
   const isProtected = isAdminRoute || isMasjidRoute;
 
@@ -82,6 +95,6 @@ export function proxy(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/((?!api|_next/static|_next/image|favicon\\.ico|.*\\.png$|.*\\.svg$|.*\\.ico$).*)",
+    "/((?!api|_next/static|_next/image|favicon\\.ico|.*\\.(?:png|jpg|jpeg|svg|ico|gif|webp|avif|woff2?)$).*)",
   ],
 };

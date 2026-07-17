@@ -116,7 +116,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Platform Branding */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Platform Branding</h2>
         <div className="flex flex-col gap-1.5 max-w-sm">
           <Label>Platform Name</Label>
@@ -130,7 +130,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Prayer Defaults */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Prayer Defaults for New Masjids</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
           <div className="flex flex-col gap-1.5">
@@ -138,7 +138,7 @@ export default function SettingsPage() {
             <select
               value={form.default_madhab}
               onChange={e => set("default_madhab", e.target.value)}
-              className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
             >
               <option value="hanafi">Hanafi</option>
               <option value="shafi">Shafi</option>
@@ -151,7 +151,7 @@ export default function SettingsPage() {
             <select
               value={form.default_calc_method}
               onChange={e => set("default_calc_method", e.target.value)}
-              className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+              className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
             >
               <option value="KARACHI">Karachi (University of Islamic Sciences)</option>
               <option value="ISNA">ISNA (North America)</option>
@@ -164,7 +164,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Supported Countries */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Supported Countries</h2>
         <div className="flex flex-col gap-3 max-w-md">
           <div className="flex flex-col gap-1.5">
@@ -189,7 +189,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Feature Flags */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Feature Flags</h2>
         <div className="flex flex-col gap-4">
           <div className="flex items-center justify-between max-w-sm">
@@ -218,7 +218,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Maintenance Mode */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Maintenance Mode</h2>
         <div className="flex items-center justify-between max-w-sm">
           <div>
@@ -245,7 +245,7 @@ export default function SettingsPage() {
       </div>
 
       {/* Terms & Privacy */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Terms &amp; Privacy</h2>
         <div className="flex flex-col gap-1.5 max-w-xs">
           <Label>Terms Version</Label>

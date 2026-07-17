@@ -33,7 +33,7 @@ export default function MasjidSubLayout({ children }: { children: React.ReactNod
   return (
     <div className="flex flex-col h-full">
       {/* Sub-header */}
-      <div className="bg-white border-b border-border/30 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 pb-0 flex flex-col gap-3 sm:gap-4 min-w-0">
+      <div className="bg-card border-b border-border/30 px-4 sm:px-6 md:px-8 pt-4 sm:pt-6 pb-0 flex flex-col gap-3 sm:gap-4 min-w-0">
         <div className="flex items-center gap-3">
           <button
             onClick={() => router.push("/admin/masjids")}

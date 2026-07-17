@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Plus, UserPlus, ShieldCheck, Calendar } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminApi } from "@/lib/api/admin";
 import { masjidsApi } from "@/lib/api/masjids";
@@ -38,10 +39,10 @@ interface AuditEntry {
 }
 
 const STATUS_STYLES: Record<string, string> = {
-  active: "bg-[#D4EDDA] text-[#155724]",
-  pending: "bg-[#FFF3CD] text-[#7a5500]",
-  suspended: "bg-[#FFEDED] text-[#C0392B]",
-  removed: "bg-muted text-muted-foreground",
+  active: statusToneClasses.success,
+  pending: statusToneClasses.warning,
+  suspended: statusToneClasses.error,
+  removed: statusToneClasses.neutral,
 };
 
 function timeAgo(iso: string) {
@@ -88,7 +89,7 @@ export default function DashboardPage() {
           <h1 className="font-heading text-2xl font-bold text-foreground">Dashboard</h1>
           <p className="text-sm text-muted-foreground mt-0.5">Welcome back — here&apos;s what&apos;s happening today</p>
         </div>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-white border border-border/40 rounded-lg px-3 py-2 shadow-sm shrink-0 self-start sm:self-center">
+        <div className="flex items-center gap-2 text-sm text-muted-foreground bg-card border border-border/40 rounded-lg px-3 py-2 shadow-sm shrink-0 self-start sm:self-center">
           <Calendar className="h-4 w-4" />
           {today}
         </div>
@@ -99,14 +100,14 @@ export default function DashboardPage() {
         {loading ? Array(3).fill(0).map((_, i) => (
           <Skeleton key={i} className="h-28 rounded-xl" />
         )) : (<>
-          <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
             <p className="text-sm text-muted-foreground">Total Masjids</p>
             <p className="font-heading text-4xl font-bold text-foreground">{stats?.total_masjids ?? 0}</p>
             <p className="text-xs text-muted-foreground">
               {stats?.active_masjids} active · {stats?.pending_masjids} pending · {stats?.suspended_masjids} suspended
             </p>
           </div>
-          <div className="bg-white rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-5 flex flex-col gap-2 shadow-sm border border-border/30">
             <p className="text-sm text-muted-foreground">App Users</p>
             <p className="font-heading text-4xl font-bold text-foreground">{stats?.total_users ?? 0}</p>
             <p className="text-xs text-muted-foreground">registered mobile users</p>
@@ -124,17 +125,17 @@ export default function DashboardPage() {
         {loading ? Array(3).fill(0).map((_, i) => (
           <Skeleton key={i} className="h-20 rounded-xl" />
         )) : (<>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Verified Masjids</p>
             <p className="font-heading text-2xl font-bold text-foreground">{stats?.verified_masjids ?? 0}</p>
             <p className="text-xs text-muted-foreground">{(stats?.total_masjids ?? 0) - (stats?.verified_masjids ?? 0)} pending verification</p>
           </div>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Active Campaigns</p>
             <p className="font-heading text-2xl font-bold text-foreground">{stats?.active_campaigns ?? 0}</p>
             <p className="text-xs text-muted-foreground">fundraising campaigns</p>
           </div>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Recent Activity</p>
             <p className="font-heading text-2xl font-bold text-foreground">{audit.length}</p>
             <p className="text-xs text-muted-foreground">audit events loaded</p>
@@ -145,7 +146,7 @@ export default function DashboardPage() {
       {/* Bottom row */}
       <div className="flex flex-col lg:flex-row gap-5 min-w-0">
         {/* Recent masjids */}
-        <div className="flex-1 min-w-0 bg-white rounded-xl shadow-sm border border-border/30 overflow-hidden">
+        <div className="flex-1 min-w-0 bg-card rounded-xl shadow-sm border border-border/30 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
             <p className="font-semibold text-sm text-foreground">Recent Masjids</p>
             <Link href="/admin/masjids" className="text-xs text-accent hover:underline">View all →</Link>
@@ -171,7 +172,7 @@ export default function DashboardPage() {
 
         {/* Quick actions + activity */}
         <div className="w-full lg:w-72 shrink-0 flex flex-col gap-4">
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
             <p className="font-semibold text-sm text-foreground">Quick Actions</p>
             <Button asChild className="w-full bg-primary hover:bg-primary/90 gap-2">
               <Link href="/admin/masjids/new"><Plus className="h-4 w-4" /> Add Masjid</Link>
@@ -184,7 +185,7 @@ export default function DashboardPage() {
             </Button>
           </div>
 
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
             <p className="font-semibold text-sm text-foreground">Recent Activity</p>
             {loading ? <Skeleton className="h-16" /> : audit.slice(0, 3).map((e, i) => (
               <div key={i} className="flex gap-2.5 items-start">

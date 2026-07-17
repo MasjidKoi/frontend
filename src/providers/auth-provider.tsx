@@ -42,7 +42,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     };
 
-    hydrate();
+    // A malformed/off-spec stored token can make setTokens throw synchronously
+    // (e.g. decode succeeds but app_metadata is missing). Without this catch the
+    // rejected promise would leave isLoading stuck true forever. clearAuth()
+    // resets loading and drops the bad tokens.
+    hydrate().catch(() => clearAuth());
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

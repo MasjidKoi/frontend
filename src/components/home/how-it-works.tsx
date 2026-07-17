@@ -44,7 +44,7 @@ export function HowItWorks() {
         <Stagger className="grid grid-cols-1 md:grid-cols-3 gap-5 w-full">
           {STEPS.map(({ num, title, description }) => (
             <StaggerItem key={num}>
-              <div className="bg-white rounded-2xl p-5 sm:p-7 flex flex-col gap-3 shadow-sm h-full">
+              <div className="bg-card rounded-2xl p-5 sm:p-7 flex flex-col gap-3 shadow-sm h-full">
                 <span className="font-mono font-bold text-4xl text-accent">
                   {num}
                 </span>

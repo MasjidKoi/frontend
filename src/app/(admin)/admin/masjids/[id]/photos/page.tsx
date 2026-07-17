@@ -36,7 +36,7 @@ export default function AdminMasjidPhotosPage() {
           {[1, 2, 3].map(i => <Skeleton key={i} className="aspect-square rounded-xl" />)}
         </div>
       ) : photos.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No photos uploaded</p>
         </div>
       ) : (
@@ -45,7 +45,7 @@ export default function AdminMasjidPhotosPage() {
             <div key={p.photo_id} className="relative group rounded-xl overflow-hidden border border-border/30 shadow-sm aspect-square bg-muted">
               <img src={p.url} alt="Masjid photo" className="w-full h-full object-cover" />
               {p.is_cover && (
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-primary/90 text-white text-xs px-2 py-1 rounded-full">
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-accent-gold text-white text-xs px-2 py-1 rounded-full">
                   <Star className="h-3 w-3 fill-white" /> Cover
                 </div>
               )}

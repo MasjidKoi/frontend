@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { masjidsApi, type MasjidReport } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
@@ -10,9 +11,9 @@ const PAGE_SIZE = 20;
 const STATUSES = ["All", "pending", "reviewed", "resolved"];
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:  "bg-[#FFF3CD] text-[#7a5500]",
-  reviewed: "bg-[#CCE5FF] text-[#004085]",
-  resolved: "bg-[#D4EDDA] text-[#155724]",
+  pending:  statusToneClasses.warning,
+  reviewed: statusToneClasses.info,
+  resolved: statusToneClasses.success,
 };
 
 function timeAgo(iso: string) {
@@ -80,7 +81,7 @@ export default function ReportsPage() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             aria-label="Filter by status"
-            className="h-9 rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className="h-9 rounded-md border border-input bg-background pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
           >
             {STATUSES.map(s => <option key={s} value={s}>{s === "All" ? "All Status" : s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
           </select>
@@ -89,7 +90,7 @@ export default function ReportsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[1fr_2fr_1fr_120px_200px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[900px] md:min-w-0">
           {["Field", "Description", "Status", "Submitted", "Actions"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -119,7 +120,7 @@ export default function ReportsPage() {
                   <button
                     disabled={busy}
                     onClick={() => handleUpdate(r, "reviewed")}
-                    className="text-xs px-2.5 py-1.5 rounded-md bg-[#CCE5FF] text-[#004085] hover:bg-[#b8d7ff] transition-colors disabled:opacity-40"
+                    className="text-xs px-2.5 py-1.5 rounded-md bg-info-soft text-info hover:bg-info-soft/70 transition-colors disabled:opacity-40"
                   >
                     Mark Reviewed
                   </button>
@@ -128,7 +129,7 @@ export default function ReportsPage() {
                   <button
                     disabled={busy}
                     onClick={() => handleUpdate(r, "resolved")}
-                    className="text-xs px-2.5 py-1.5 rounded-md bg-[#D4EDDA] text-[#155724] hover:bg-[#c3e6cb] transition-colors disabled:opacity-40"
+                    className="text-xs px-2.5 py-1.5 rounded-md bg-primary-soft text-primary hover:bg-primary-soft/70 transition-colors disabled:opacity-40"
                   >
                     Mark Resolved
                   </button>
@@ -145,10 +146,10 @@ export default function ReportsPage() {
           {total > PAGE_SIZE && (
             <div className="flex gap-2">
               <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
               <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
               <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
             </div>
           )}
         </div>

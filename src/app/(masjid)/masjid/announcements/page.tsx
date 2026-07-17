@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { Plus, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -65,6 +66,7 @@ export default function AnnouncementsPage() {
   const [submitting, setSubmitting] = useState(false);
 
   const load = useCallback(async () => {
+    if (!id) return; // auth store not hydrated yet — avoid a /masjids//... request + false error toast
     setLoading(true);
     try {
       const data = await announcementsApi.listAdmin(id, { page_size: 100 });
@@ -172,7 +174,7 @@ export default function AnnouncementsPage() {
           {[1, 2].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No announcements yet</p>
           <button onClick={openCreate} className="text-accent text-sm hover:underline mt-1">Create the first one →</button>
         </div>
@@ -181,24 +183,20 @@ export default function AnnouncementsPage() {
           {items.map(ann => {
             const isOverdue = ann.scheduled_at && new Date(ann.scheduled_at) <= new Date();
             return (
-              <div key={ann.announcement_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+              <div key={ann.announcement_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <h3 className="font-semibold text-foreground text-base">{ann.title}</h3>
                     <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ann.body}</p>
                   </div>
                   <div className="flex flex-col items-end gap-1.5 shrink-0">
-                    <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                      ann.is_published ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#7a5500]"
-                    }`}>
+                    <StatusBadge tone={ann.is_published ? "success" : "warning"}>
                       {ann.is_published ? "Published" : "Draft"}
-                    </span>
+                    </StatusBadge>
                     {!ann.is_published && ann.scheduled_at && (
-                      <span className={`text-xs font-medium px-2.5 py-1 rounded-full ${
-                        isOverdue ? "bg-[#FFEDED] text-[#C0392B]" : "bg-[#FFF3CD] text-[#7a5500]"
-                      }`}>
+                      <StatusBadge tone={isOverdue ? "error" : "warning"}>
                         Auto-publish: {formatScheduled(ann.scheduled_at)}
-                      </span>
+                      </StatusBadge>
                     )}
                   </div>
                 </div>
@@ -221,13 +219,13 @@ export default function AnnouncementsPage() {
                     )}
                     <button
                       onClick={() => openEdit(ann)}
-                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
+                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                     >
                       <Pencil className="h-3 w-3" /> Edit
                     </button>
                     <button
                       onClick={() => setDeleteItem(ann)}
-                      className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors flex items-center gap-1.5"
+                      className="text-xs px-3 py-1.5 rounded-md bg-error-soft text-error hover:bg-error-soft/70 transition-colors flex items-center gap-1.5"
                     >
                       <Trash2 className="h-3 w-3" /> Delete
                     </button>
@@ -275,7 +273,7 @@ export default function AnnouncementsPage() {
                       onClick={() => setPublishMode(m)}
                       className={`flex-1 py-1.5 rounded-md text-xs font-medium capitalize transition-colors ${
                         publishMode === m
-                          ? "bg-white shadow-sm text-foreground"
+                          ? "bg-card shadow-sm text-foreground"
                           : "text-muted-foreground hover:text-foreground"
                       }`}
                     >
@@ -322,7 +320,7 @@ export default function AnnouncementsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} className="bg-[#C0392B] hover:bg-[#a93226] text-white">
+            <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

@@ -5,12 +5,22 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Plus, Search, ChevronDown, BadgeCheck, Download, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge, type StatusTone } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { masjidsApi } from "@/lib/api/masjids";
 import { toast } from "sonner";
+
+function useDebounce<T>(value: T, delay = 350): T {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
 
 interface Masjid {
   masjid_id: string;
@@ -21,11 +31,11 @@ interface Masjid {
   verified: boolean;
 }
 
-const STATUS_STYLES: Record<string, string> = {
-  active:    "bg-[#D4EDDA] text-[#155724]",
-  pending:   "bg-[#FFF3CD] text-[#7a5500]",
-  suspended: "bg-[#FFEDED] text-[#C0392B]",
-  removed:   "bg-muted text-muted-foreground",
+const STATUS_TONE: Record<string, StatusTone> = {
+  active:    "success",
+  pending:   "warning",
+  suspended: "error",
+  removed:   "neutral",
 };
 
 const STATUSES = ["All", "active", "pending", "suspended", "removed"];
@@ -36,6 +46,7 @@ export default function MasjidsPage() {
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [q, setQ] = useState("");
+  const debouncedQ = useDebounce(q);
   const [status, setStatus] = useState("All");
   const [suspendDialogOpen, setSuspendDialogOpen] = useState(false);
   const [suspendTargetId, setSuspendTargetId] = useState<string | null>(null);
@@ -48,24 +59,31 @@ export default function MasjidsPage() {
   const [importing, setImporting] = useState(false);
   const [importResult, setImportResult] = useState<{ created: number; failed: number; errors: { row: number; reason: string }[] } | null>(null);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal?: { aborted: boolean }) => {
     setLoading(true);
     try {
       const data = await masjidsApi.list({
-        q: q || undefined,
+        q: debouncedQ || undefined,
         status: status === "All" ? undefined : status,
         page_size: 50,
       });
+      // Drop a superseded query's response so an earlier, slower request can't
+      // overwrite fresher results (out-of-order fetch race on fast typing).
+      if (signal?.aborted) return;
       setMasjids(data.items ?? []);
       setTotal(data.total ?? 0);
     } catch {
-      toast.error("Failed to load masjids");
+      if (!signal?.aborted) toast.error("Failed to load masjids");
     } finally {
-      setLoading(false);
+      if (!signal?.aborted) setLoading(false);
     }
-  }, [q, status]);
+  }, [debouncedQ, status]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const signal = { aborted: false };
+    load(signal);
+    return () => { signal.aborted = true; };
+  }, [load]);
 
   const handleVerify = async (id: string) => {
     setVerifyingId(id);
@@ -165,7 +183,7 @@ export default function MasjidsPage() {
             value={status}
             onChange={e => setStatus(e.target.value)}
             aria-label="Filter by status"
-            className="h-9 rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className="h-9 rounded-md border border-input bg-background pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
           >
             {STATUSES.map(s => <option key={s} value={s}>{s === "All" ? "All Status" : s.charAt(0).toUpperCase() + s.slice(1)}</option>)}
           </select>
@@ -174,7 +192,7 @@ export default function MasjidsPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         {/* Head */}
         <div className="grid grid-cols-[2fr_1fr_120px_100px_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[900px] md:min-w-0">
           {["Masjid Name", "Region", "Status", "Verified", "Actions"].map(h => (
@@ -198,9 +216,9 @@ export default function MasjidsPage() {
               <p className="text-xs text-muted-foreground truncate">{m.address}</p>
             </div>
             <p className="text-sm text-secondary-foreground">{m.admin_region}</p>
-            <span className={`text-xs font-medium px-2.5 py-1 rounded-full w-fit ${STATUS_STYLES[m.status] ?? STATUS_STYLES.pending}`}>
+            <StatusBadge tone={STATUS_TONE[m.status] ?? "warning"}>
               {m.status.charAt(0).toUpperCase() + m.status.slice(1)}
-            </span>
+            </StatusBadge>
             <div className="flex items-center gap-1.5">
               {m.verified
                 ? <><BadgeCheck className="h-4 w-4 text-accent" /><span className="text-xs text-accent">Verified</span></>
@@ -210,7 +228,7 @@ export default function MasjidsPage() {
             <div className="flex gap-2">
               <button
                 onClick={() => router.push(`/admin/masjids/${m.masjid_id}`)}
-                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors"
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors"
               >View</button>
               {!m.verified && m.status === "active" && (
                 <button
@@ -222,7 +240,7 @@ export default function MasjidsPage() {
               {m.status === "active" && (
                 <button
                   onClick={() => handleSuspend(m.masjid_id)}
-                  className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-md bg-error-soft text-error hover:bg-error-soft/70 transition-colors"
                 >Suspend</button>
               )}
               {m.status === "suspended" && (
@@ -270,18 +288,18 @@ export default function MasjidsPage() {
             <div className="flex flex-col gap-3 mt-2">
               <div className="bg-muted/30 rounded-lg p-4 flex gap-6">
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-[#155724]">{importResult.created}</p>
+                  <p className="text-2xl font-bold text-primary">{importResult.created}</p>
                   <p className="text-xs text-muted-foreground">Created</p>
                 </div>
                 <div className="text-center">
-                  <p className="text-2xl font-bold text-[#C0392B]">{importResult.failed}</p>
+                  <p className="text-2xl font-bold text-error">{importResult.failed}</p>
                   <p className="text-xs text-muted-foreground">Failed</p>
                 </div>
               </div>
               {importResult.errors.length > 0 && (
                 <div className="max-h-48 overflow-y-auto flex flex-col gap-1">
                   {importResult.errors.map((e, i) => (
-                    <p key={i} className="text-xs text-muted-foreground bg-[#FFEDED] rounded px-3 py-1.5">
+                    <p key={i} className="text-xs text-muted-foreground bg-error-soft rounded px-3 py-1.5">
                       Row {e.row} — {e.reason}
                     </p>
                   ))}
@@ -313,7 +331,7 @@ export default function MasjidsPage() {
             <Button
               onClick={confirmSuspend}
               disabled={suspendReason.length < 10 || suspendLoading}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {suspendLoading ? "Suspending…" : "Suspend"}
             </Button>

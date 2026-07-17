@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import {
   Dialog,
   DialogContent,
@@ -33,10 +34,10 @@ const STATUS_FILTERS = [
 ];
 
 const STATUS_STYLES: Record<string, string> = {
-  completed: "bg-[#D4EDDA] text-[#155724]",
-  pending:   "bg-[#FFF3CD] text-[#856404]",
-  refunded:  "bg-[#E3EAF2] text-[#34495E]",
-  failed:    "bg-[#FFEDED] text-[#C0392B]",
+  completed: statusToneClasses.success,
+  pending:   statusToneClasses.warning,
+  refunded:  statusToneClasses.neutral,
+  failed:    statusToneClasses.error,
 };
 
 function taka(value: string | number) {
@@ -200,7 +201,7 @@ export function DonationsView({
             className={`rounded-xl border p-4 sm:p-5 flex flex-col gap-2 ${
               accent
                 ? "bg-primary text-primary-foreground border-primary"
-                : "bg-white border-border/30"
+                : "bg-card border-border/30"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -230,7 +231,7 @@ export function DonationsView({
               className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
                 statusFilter === value
                   ? "bg-primary text-primary-foreground border-primary"
-                  : "bg-white text-muted-foreground border-border hover:text-foreground"
+                  : "bg-card text-muted-foreground border-border hover:text-foreground"
               }`}
             >
               {label}
@@ -252,7 +253,7 @@ export function DonationsView({
           ))}
         </div>
       ) : items.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">
             {statusFilter ? `No ${statusFilter} donations` : "No donations yet"}
           </p>
@@ -262,7 +263,7 @@ export function DonationsView({
           {items.map((d) => (
             <div
               key={d.donation_id}
-              className="bg-white rounded-xl shadow-sm border border-border/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
+              className="bg-card rounded-xl shadow-sm border border-border/30 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4"
             >
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2 flex-wrap">
@@ -283,7 +284,7 @@ export function DonationsView({
                 </div>
                 <span
                   className={`text-xs font-medium px-2.5 py-1 rounded-full capitalize shrink-0 ${
-                    STATUS_STYLES[d.status] ?? "bg-muted text-muted-foreground"
+                    STATUS_STYLES[d.status] ?? statusToneClasses.neutral
                   }`}
                 >
                   {d.status}
@@ -294,7 +295,7 @@ export function DonationsView({
                       setRefundTarget(d);
                       setRefundReason("");
                     }}
-                    className="text-xs px-2.5 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5 shrink-0"
+                    className="text-xs px-2.5 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5 shrink-0"
                   >
                     <Undo2 className="h-3 w-3" /> Refund
                   </button>
@@ -313,7 +314,7 @@ export function DonationsView({
             <button
               disabled={page === 1}
               onClick={() => setPage((p) => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >
               ← Previous
             </button>
@@ -321,7 +322,7 @@ export function DonationsView({
             <button
               disabled={page * PAGE_SIZE >= total}
               onClick={() => setPage((p) => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >
               Next →
             </button>
@@ -359,7 +360,7 @@ export function DonationsView({
                     id="payout-method"
                     value={payout.method}
                     onChange={(e) => setPayout((f) => ({ ...f, method: e.target.value as DisbursementMethod }))}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
                   >
                     <option value="bank">Bank</option>
                     <option value="bkash">bKash</option>
@@ -434,7 +435,7 @@ export function DonationsView({
                 <Button
                   onClick={submitRefund}
                   disabled={refunding}
-                  className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   {refunding ? "Refunding…" : "Confirm refund"}
                 </Button>

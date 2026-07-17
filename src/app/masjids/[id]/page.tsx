@@ -146,7 +146,7 @@ export default function PublicMasjidPage() {
         </div>
 
         {/* Prayer times */}
-        <div className="bg-white rounded-2xl shadow-sm border border-border/30 overflow-hidden">
+        <div className="bg-card rounded-2xl shadow-sm border border-border/30 overflow-hidden">
           <div className="bg-primary px-5 py-4">
             <p className="font-heading font-bold text-white text-base">Prayer Times</p>
             {pt && <p className="text-xs text-secondary/70 mt-0.5">
@@ -181,7 +181,7 @@ export default function PublicMasjidPage() {
           <div className="flex flex-col gap-4">
             <h2 className="font-heading text-xl font-bold text-foreground">Announcements</h2>
             {announcements.map(ann => (
-              <div key={ann.announcement_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-2">
+              <div key={ann.announcement_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-2">
                 <h3 className="font-semibold text-foreground">{ann.title}</h3>
                 <p className="text-sm text-muted-foreground leading-relaxed">{ann.body}</p>
                 {ann.published_at && (
@@ -196,7 +196,7 @@ export default function PublicMasjidPage() {
 
         {/* Contact */}
         {(masjid.contact?.phone || masjid.contact?.email || masjid.contact?.website_url) && (
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
             <h2 className="font-semibold text-foreground">Contact</h2>
             <div className="flex flex-col gap-2 text-sm text-muted-foreground">
               {masjid.contact?.phone && <span>📞 {masjid.contact.phone}</span>}

@@ -3,14 +3,15 @@
 import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { masjidsApi, type CoAdminInvite } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:  "bg-[#FFF3CD] text-[#7a5500]",
-  accepted: "bg-[#D4EDDA] text-[#155724]",
-  declined: "bg-[#FFEDED] text-[#C0392B]",
-  expired:  "bg-muted text-muted-foreground",
+  pending:  statusToneClasses.warning,
+  accepted: statusToneClasses.success,
+  declined: statusToneClasses.error,
+  expired:  statusToneClasses.neutral,
 };
 
 export default function AdminMasjidCoAdminsPage() {
@@ -40,7 +41,7 @@ export default function AdminMasjidCoAdminsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_1fr_120px_120px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[680px] md:min-w-0">
           {["Email", "Status", "Invited", "Accepted"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>

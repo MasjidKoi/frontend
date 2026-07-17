@@ -4,7 +4,14 @@ const REFRESH_KEY = "mkoi_refresh";
 const COOKIE_MAX_AGE = 60 * 60; // 1 hour — matches GoTrue default
 
 function setCookie(value: string): void {
-  document.cookie = `${TOKEN_KEY}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Strict`;
+  // Add Secure over HTTPS so the token cookie is never sent on a plaintext hop.
+  // NOTE: this cookie is written from client JS (so proxy.ts can read it at the
+  // edge) and therefore cannot be HttpOnly. Moving token storage to a server-set
+  // HttpOnly cookie (and dropping localStorage) is the real hardening — tracked
+  // as part of unifying the API ingress. SameSite=Strict already blocks CSRF.
+  const secure =
+    typeof location !== "undefined" && location.protocol === "https:" ? "; Secure" : "";
+  document.cookie = `${TOKEN_KEY}=${value}; path=/; max-age=${COOKIE_MAX_AGE}; SameSite=Strict${secure}`;
 }
 
 function deleteCookie(): void {

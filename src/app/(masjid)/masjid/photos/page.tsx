@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@/components/ui/button";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
@@ -104,14 +105,14 @@ export default function PhotosPage() {
         </div>
         <div>
           <input ref={fileRef} type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleUpload} />
-          <button
+          <Button
             onClick={() => fileRef.current?.click()}
             disabled={uploading}
-            className="flex items-center gap-2 px-4 py-2 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90 disabled:opacity-50 transition-colors"
+            className="gap-2 rounded-lg px-4"
           >
             <Upload className="h-4 w-4" />
             {uploading ? "Uploading…" : "Upload Photo"}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -120,7 +121,7 @@ export default function PhotosPage() {
           {[1, 2, 3, 4, 5, 6].map(i => <Skeleton key={i} className="aspect-video rounded-xl" />)}
         </div>
       ) : photos.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-16 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-16 text-center">
           <p className="text-muted-foreground text-sm">No photos uploaded yet</p>
           <button
             onClick={() => fileRef.current?.click()}
@@ -132,7 +133,7 @@ export default function PhotosPage() {
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {photos.map((photo, index) => (
-            <div key={photo.photo_id} className="group relative rounded-xl overflow-hidden border border-border/30 shadow-sm bg-white">
+            <div key={photo.photo_id} className="group relative rounded-xl overflow-hidden border border-border/30 shadow-sm bg-card">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={photo.url}
@@ -141,7 +142,7 @@ export default function PhotosPage() {
               />
 
               {photo.is_cover && (
-                <div className="absolute top-2 left-2 flex items-center gap-1 bg-amber-400 text-amber-900 text-xs font-medium px-2 py-0.5 rounded-full">
+                <div className="absolute top-2 left-2 flex items-center gap-1 bg-accent-gold text-white text-xs font-medium px-2 py-0.5 rounded-full">
                   <Star className="h-3 w-3 fill-current" /> Cover
                 </div>
               )}
@@ -151,7 +152,7 @@ export default function PhotosPage() {
                   <button
                     onClick={() => handleSetCover(photo)}
                     aria-label="Set as cover photo"
-                    className="text-xs px-2.5 py-1.5 rounded-md bg-amber-400 text-amber-900 font-medium hover:bg-amber-300 transition-colors flex items-center gap-1"
+                    className="text-xs px-2.5 py-1.5 rounded-md bg-accent-gold text-white font-medium hover:bg-accent-gold/90 transition-colors flex items-center gap-1"
                   >
                     <Star className="h-3 w-3" /> Cover
                   </button>
@@ -159,7 +160,7 @@ export default function PhotosPage() {
                 <button
                   onClick={() => setDeleteTarget(photo)}
                   aria-label="Delete photo"
-                  className="text-xs px-2 py-1.5 rounded-md bg-[#C0392B] text-white hover:bg-[#a93226] transition-colors"
+                  className="text-xs px-2 py-1.5 rounded-md bg-destructive text-destructive-foreground hover:bg-destructive/90 transition-colors"
                 >
                   <Trash2 className="h-3.5 w-3.5" />
                 </button>
@@ -170,7 +171,7 @@ export default function PhotosPage() {
                   disabled={index === 0}
                   onClick={() => move(index, "up")}
                   aria-label="Move photo up"
-                  className="p-1 rounded bg-white/80 hover:bg-white text-foreground disabled:opacity-30 transition-colors"
+                  className="p-1 rounded bg-card/80 hover:bg-card text-foreground disabled:opacity-30 transition-colors"
                 >
                   <ChevronUp className="h-3.5 w-3.5" />
                 </button>
@@ -178,13 +179,13 @@ export default function PhotosPage() {
                   disabled={index === photos.length - 1}
                   onClick={() => move(index, "down")}
                   aria-label="Move photo down"
-                  className="p-1 rounded bg-white/80 hover:bg-white text-foreground disabled:opacity-30 transition-colors"
+                  className="p-1 rounded bg-card/80 hover:bg-card text-foreground disabled:opacity-30 transition-colors"
                 >
                   <ChevronDown className="h-3.5 w-3.5" />
                 </button>
               </div>
 
-              <div className="px-3 py-2 flex items-center justify-between bg-white border-t border-border/20">
+              <div className="px-3 py-2 flex items-center justify-between bg-card border-t border-border/20">
                 <span className="text-xs text-muted-foreground">#{index + 1}</span>
                 <span className="text-xs text-muted-foreground">
                   {new Date(photo.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
@@ -209,7 +210,7 @@ export default function PhotosPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-[#C0392B] hover:bg-[#a93226] text-white disabled:opacity-50">
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50">
               {deleting ? "Deleting…" : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>

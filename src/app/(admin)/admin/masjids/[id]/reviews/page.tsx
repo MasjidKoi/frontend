@@ -17,7 +17,7 @@ function StarRating({ rating }: { rating: number }) {
   return (
     <div className="flex gap-0.5">
       {[1, 2, 3, 4, 5].map(i => (
-        <Star key={i} className={`h-3.5 w-3.5 ${i <= rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/30"}`} />
+        <Star key={i} className={`h-3.5 w-3.5 ${i <= rating ? "fill-accent-gold text-accent-gold" : "text-muted-foreground/30"}`} />
       ))}
     </div>
   );
@@ -66,7 +66,7 @@ export default function AdminMasjidReviewsPage() {
           <p className="text-sm text-muted-foreground mt-0.5">Community ratings and feedback</p>
         </div>
         {avgRating != null && (
-          <div className="flex items-center gap-2 bg-white border border-border/30 rounded-lg px-4 py-2 shadow-sm">
+          <div className="flex items-center gap-2 bg-card border border-border/30 rounded-lg px-4 py-2 shadow-sm">
             <StarRating rating={Math.round(avgRating)} />
             <span className="text-sm font-semibold text-foreground">{avgRating.toFixed(1)}</span>
             <span className="text-xs text-muted-foreground">({total} reviews)</span>
@@ -79,13 +79,13 @@ export default function AdminMasjidReviewsPage() {
           {[1, 2, 3].map(i => <Skeleton key={i} className="h-24 rounded-xl" />)}
         </div>
       ) : reviews.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No reviews yet</p>
         </div>
       ) : (
         <div className="flex flex-col gap-3">
           {reviews.map(r => (
-            <div key={r.review_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex items-start justify-between gap-4">
+            <div key={r.review_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex items-start justify-between gap-4">
               <div className="flex flex-col gap-1.5 flex-1 min-w-0">
                 <div className="flex items-center gap-2">
                   <StarRating rating={r.rating} />
@@ -99,7 +99,7 @@ export default function AdminMasjidReviewsPage() {
               <button
                 onClick={() => setDeleteTarget(r)}
                 aria-label="Remove review"
-                className="text-xs px-2 py-1.5 rounded-md border border-border bg-white hover:bg-[#FFEDED] hover:text-[#C0392B] hover:border-[#C0392B]/30 text-muted-foreground transition-colors shrink-0"
+                className="text-xs px-2 py-1.5 rounded-md border border-border bg-card hover:bg-error-soft hover:text-error hover:border-error/30 text-muted-foreground transition-colors shrink-0"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -113,10 +113,10 @@ export default function AdminMasjidReviewsPage() {
           <p className="text-xs text-muted-foreground">{total} total reviews</p>
           <div className="flex gap-2">
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
           </div>
         </div>
       )}
@@ -131,7 +131,7 @@ export default function AdminMasjidReviewsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={removing}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={removing} className="bg-[#C0392B] hover:bg-[#a93226] text-white disabled:opacity-50">
+            <AlertDialogAction onClick={handleDelete} disabled={removing} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50">
               {removing ? "Removing…" : "Remove"}
             </AlertDialogAction>
           </AlertDialogFooter>

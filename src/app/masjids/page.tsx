@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import Link from "next/link";
 import { Search, MapPin, BadgeCheck, ArrowLeft, Timer } from "lucide-react";
+import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { masjidsApi } from "@/lib/api/masjids";
@@ -32,7 +33,7 @@ export default function MasjidsListPage() {
   const [loading, setLoading] = useState(true);
   const debouncedQ = useDebounce(q);
 
-  const load = useCallback(async () => {
+  const load = useCallback(async (signal: { aborted: boolean }) => {
     setLoading(true);
     try {
       const data = await masjidsApi.list({
@@ -40,16 +41,23 @@ export default function MasjidsListPage() {
         status: "active",
         page_size: 50,
       });
+      // Ignore a stale response from a superseded query so an earlier, slower
+      // request can't overwrite fresher results (out-of-order fetch race).
+      if (signal.aborted) return;
       setMasjids(data.items ?? []);
       setTotal(data.total ?? 0);
     } catch {
-      // silent
+      if (!signal.aborted) toast.error("Failed to load masjids");
     } finally {
-      setLoading(false);
+      if (!signal.aborted) setLoading(false);
     }
   }, [debouncedQ]);
 
-  useEffect(() => { load(); }, [load]);
+  useEffect(() => {
+    const signal = { aborted: false };
+    load(signal);
+    return () => { signal.aborted = true; };
+  }, [load]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -89,7 +97,7 @@ export default function MasjidsListPage() {
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="Search by name, area or district…"
-            className="pl-10 h-11 text-base bg-white shadow-sm"
+            className="pl-10 h-11 text-base bg-background shadow-sm"
             autoFocus
           />
         </div>
@@ -117,7 +125,7 @@ export default function MasjidsListPage() {
                 <Link
                   key={m.masjid_id}
                   href={`/masjids/${m.masjid_id}`}
-                  className="group bg-white rounded-2xl shadow-sm border border-border/30 p-5 flex flex-col gap-3 hover:shadow-md hover:border-accent/30 transition-all"
+                  className="group bg-card rounded-2xl shadow-sm border border-border/30 p-5 flex flex-col gap-3 hover:shadow-md hover:border-accent/30 transition-all"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex-1 min-w-0">

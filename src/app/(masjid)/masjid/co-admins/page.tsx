@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -17,10 +18,10 @@ import { useAuthStore } from "@/store/auth-store";
 import { toast } from "sonner";
 
 const STATUS_STYLES: Record<string, string> = {
-  pending:  "bg-[#FFF3CD] text-[#7a5500]",
-  accepted: "bg-[#D4EDDA] text-[#155724]",
-  declined: "bg-[#FFEDED] text-[#C0392B]",
-  expired:  "bg-muted text-muted-foreground",
+  pending:  statusToneClasses.warning,
+  accepted: statusToneClasses.success,
+  declined: statusToneClasses.error,
+  expired:  statusToneClasses.neutral,
 };
 
 function timeUntil(iso: string) {
@@ -116,7 +117,7 @@ export default function CoAdminsPage() {
         </div>
         <div className="flex items-center gap-3">
           {total > 0 && (
-            <span className="text-sm text-muted-foreground bg-white border border-border/40 rounded-lg px-3 py-1.5 shadow-sm">
+            <span className="text-sm text-muted-foreground bg-card border border-border/40 rounded-lg px-3 py-1.5 shadow-sm">
               {total} total
             </span>
           )}
@@ -126,7 +127,7 @@ export default function CoAdminsPage() {
         </div>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_100px_100px_80px_160px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[720px] md:min-w-0">
           {["Email", "Status", "Expires", "Resent", "Actions"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -163,7 +164,7 @@ export default function CoAdminsPage() {
                 <button
                   onClick={() => handleResend(inv)}
                   disabled={resendingId === inv.invite_id}
-                  className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <RefreshCw className="h-3 w-3" /> {resendingId === inv.invite_id ? "Resending…" : "Resend"}
                 </button>
@@ -171,7 +172,7 @@ export default function CoAdminsPage() {
               <button
                 onClick={() => setRevokeTarget(inv)}
                 aria-label="Revoke access"
-                className="text-xs px-2 py-1.5 rounded-md border border-border bg-white hover:bg-[#FFEDED] hover:text-[#C0392B] hover:border-[#C0392B]/30 text-muted-foreground transition-colors"
+                className="text-xs px-2 py-1.5 rounded-md border border-border bg-card hover:bg-error-soft hover:text-error hover:border-error/30 text-muted-foreground transition-colors"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -222,7 +223,7 @@ export default function CoAdminsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleRevoke} className="bg-[#C0392B] hover:bg-[#a93226] text-white">Revoke</AlertDialogAction>
+            <AlertDialogAction onClick={handleRevoke} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Revoke</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>

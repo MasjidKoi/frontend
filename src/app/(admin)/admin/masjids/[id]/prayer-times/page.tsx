@@ -210,7 +210,7 @@ export default function PrayerTimesPage() {
               <div
                 key={key}
                 className={`rounded-2xl p-5 flex flex-col gap-4 ${
-                  isFirst ? "bg-primary text-white" : "bg-white shadow-sm border border-border/30"
+                  isFirst ? "bg-primary text-white" : "bg-card shadow-sm border border-border/30"
                 }`}
               >
                 <p className={`text-xs font-semibold uppercase tracking-wide ${isFirst ? "text-secondary/70" : "text-muted-foreground"}`}>
@@ -275,13 +275,13 @@ export default function PrayerTimesPage() {
           })}
         </div>
       ) : (
-        <div className="bg-white rounded-xl border border-border/30 p-4 sm:p-6 md:p-8 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-4 sm:p-6 md:p-8 text-center">
           <p className="text-muted-foreground text-sm">No prayer times for today. Click Recalculate to generate.</p>
         </div>
       )}
 
       {/* Jumu'ah Schedule */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
         <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Jumu&apos;ah Schedule</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
           {[

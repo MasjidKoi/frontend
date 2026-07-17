@@ -54,7 +54,7 @@ export function Features() {
                 className={`rounded-2xl p-7 flex flex-col gap-4 h-full ${
                   inverted
                     ? "bg-primary text-primary-foreground"
-                    : "bg-white shadow-sm border border-border/40"
+                    : "bg-card shadow-sm border border-border/40"
                 }`}
               >
                 <div

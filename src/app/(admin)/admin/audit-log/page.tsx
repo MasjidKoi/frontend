@@ -17,11 +17,11 @@ interface AuditEntry {
 }
 
 const ACTION_COLOR: Record<string, string> = {
-  create_masjid:    "bg-[#D4EDDA]",
-  verify_masjid:    "bg-[#D4EDDA]",
-  suspend_masjid:   "bg-[#FFEDED]",
-  set_prayer_times: "bg-[#FFF3CD]",
-  recalc_prayer_times: "bg-[#FFF3CD]",
+  create_masjid:    "bg-primary-soft",
+  verify_masjid:    "bg-primary-soft",
+  suspend_masjid:   "bg-error-soft",
+  set_prayer_times: "bg-accent-gold-soft",
+  recalc_prayer_times: "bg-accent-gold-soft",
 };
 
 function timeAgo(iso: string) {
@@ -61,7 +61,7 @@ export default function AuditLogPage() {
         <p className="text-sm text-muted-foreground mt-0.5">All admin write actions — append-only, immutable</p>
       </div>
 
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         {/* Head */}
         <div className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[640px] md:min-w-0">
           {["Action", "Target", "Admin", "Timestamp"].map(h => (
@@ -78,11 +78,13 @@ export default function AuditLogPage() {
         ) : entries.map(e => (
           <div key={e.log_id} className="grid grid-cols-[2fr_1fr_2fr_1fr] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 min-w-[640px] md:min-w-0">
             <div className="flex items-center gap-2.5">
-              <span className={`h-2 w-2 rounded-full shrink-0 ${ACTION_COLOR[e.action] ? "" : "bg-accent"}`}
-                style={{ backgroundColor: ACTION_COLOR[e.action] ? undefined : undefined }}
-              >
-                <span className={`block h-2 w-2 rounded-full ${e.action.includes("suspend") || e.action.includes("delete") ? "bg-[#C0392B]" : "bg-accent"}`} />
-              </span>
+              <span
+                className={`h-2 w-2 rounded-full shrink-0 ${
+                  e.action.includes("suspend") || e.action.includes("delete")
+                    ? "bg-error"
+                    : ACTION_COLOR[e.action] ?? "bg-accent"
+                }`}
+              />
               <span className="text-sm font-mono font-medium text-foreground">{e.action}</span>
             </div>
             <span className="text-sm text-muted-foreground">{e.target_entity ?? "—"}</span>
@@ -100,13 +102,13 @@ export default function AuditLogPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button
               disabled={page * PAGE_SIZE >= total}
               onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed"
             >Next →</button>
           </div>
         </div>

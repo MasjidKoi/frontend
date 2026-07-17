@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { adminApi, type SupportTicket } from "@/lib/api/admin";
 import { toast } from "sonner";
 
@@ -16,9 +17,9 @@ const STATUSES = ["All", "Open", "InProgress", "Resolved"];
 const CATEGORIES = ["All", "Bug", "IncorrectData", "FeatureRequest", "Other"];
 
 const STATUS_STYLES: Record<string, string> = {
-  Open:       "bg-[#FFF3CD] text-[#7a5500]",
-  InProgress: "bg-[#CCE5FF] text-[#004085]",
-  Resolved:   "bg-[#D4EDDA] text-[#155724]",
+  Open:       statusToneClasses.warning,
+  InProgress: statusToneClasses.info,
+  Resolved:   statusToneClasses.success,
 };
 
 function timeAgo(iso: string) {
@@ -105,7 +106,7 @@ export default function SupportPage() {
             value={statusFilter}
             onChange={e => setStatusFilter(e.target.value)}
             aria-label="Filter by status"
-            className="h-9 rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className="h-9 rounded-md border border-input bg-background pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
           >
             {STATUSES.map(s => <option key={s} value={s}>{s === "All" ? "All Status" : s}</option>)}
           </select>
@@ -116,7 +117,7 @@ export default function SupportPage() {
             value={categoryFilter}
             onChange={e => setCategoryFilter(e.target.value)}
             aria-label="Filter by category"
-            className="h-9 rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
+            className="h-9 rounded-md border border-input bg-background pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
           >
             {CATEGORIES.map(c => <option key={c} value={c}>{c === "All" ? "All Categories" : c}</option>)}
           </select>
@@ -125,7 +126,7 @@ export default function SupportPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_1fr_1fr_120px_120px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[660px] md:min-w-0">
           {["Subject", "Category", "Status", "Submitted", "Actions"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -153,7 +154,7 @@ export default function SupportPage() {
             <p className="text-xs text-muted-foreground">{timeAgo(t.created_at)}</p>
             <button
               onClick={() => openUpdate(t)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors w-fit"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors w-fit"
             >
               Update
             </button>
@@ -167,10 +168,10 @@ export default function SupportPage() {
           {total > PAGE_SIZE && (
             <div className="flex gap-2">
               <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
               <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
               <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-                className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+                className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
             </div>
           )}
         </div>
@@ -195,7 +196,7 @@ export default function SupportPage() {
                 <select
                   value={newStatus}
                   onChange={e => setNewStatus(e.target.value)}
-                  className="h-9 w-full rounded-md border border-input bg-white pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
+                  className="h-9 w-full rounded-md border border-input bg-background pl-3 pr-8 text-sm text-foreground appearance-none focus:outline-none focus:ring-2 focus:ring-ring/30"
                 >
                   {["Open", "InProgress", "Resolved"].map(s => <option key={s} value={s}>{s}</option>)}
                 </select>

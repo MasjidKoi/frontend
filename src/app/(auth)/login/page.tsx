@@ -40,7 +40,15 @@ function LoginForm() {
       setTokens(tokens.access_token, tokens.refresh_token);
 
       const user = useAuthStore.getState().user!;
-      const redirectTo = searchParams.get("redirectTo");
+
+      // Only honor a same-origin relative path — reject absolute URLs and
+      // protocol-relative values to prevent an open-redirect via
+      // ?redirectTo=https://evil.example.com after a legitimate login.
+      // The second char is rejected for both "/" and "\" because browsers treat
+      // "/\evil.com" (and "//evil.com") as protocol-relative → off-origin.
+      const raw = searchParams.get("redirectTo");
+      const redirectTo =
+        raw && raw.startsWith("/") && !/^\/[/\\]/.test(raw) ? raw : null;
 
       if (redirectTo) {
         router.push(redirectTo);

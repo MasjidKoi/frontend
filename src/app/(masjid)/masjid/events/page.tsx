@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -71,7 +72,10 @@ export default function EventsPage() {
     finally { setLoading(false); }
   }, [mid, page]);
 
-  useEffect(() => { load(page); }, [page]); // eslint-disable-line react-hooks/exhaustive-deps
+  // Depend on the memoized loader (not just [page]) so the fetch re-runs once
+  // masjidId hydrates from the async auth store — otherwise the first mount bails
+  // on the empty `mid` guard and never re-fires, leaving a permanent skeleton.
+  useEffect(() => { load(); }, [load]);
 
   const openCreate = () => {
     setEditTarget(null);
@@ -164,14 +168,14 @@ export default function EventsPage() {
           {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : events.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No events yet</p>
           <button onClick={openCreate} className="text-accent text-sm hover:underline mt-1">Create the first one →</button>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
           {events.map(ev => (
-            <div key={ev.event_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+            <div key={ev.event_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-base">{ev.title}</h3>
@@ -180,7 +184,7 @@ export default function EventsPage() {
                 </div>
                 <div className="flex flex-col items-end gap-1.5 shrink-0">
                   {ev.rsvp_enabled && (
-                    <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#D4EDDA] text-[#155724]">RSVP On</span>
+                    <StatusBadge tone="success">RSVP On</StatusBadge>
                   )}
                 </div>
               </div>
@@ -196,20 +200,20 @@ export default function EventsPage() {
                   {ev.rsvp_enabled && (
                     <button
                       onClick={() => openAttendees(ev)}
-                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
+                      className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                     >
                       <Users className="h-3 w-3" /> Attendees
                     </button>
                   )}
                   <button
                     onClick={() => openEdit(ev)}
-                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
+                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                   >
                     <Pencil className="h-3 w-3" /> Edit
                   </button>
                   <button
                     onClick={() => setDeleteTarget(ev)}
-                    className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors flex items-center gap-1.5"
+                    className="text-xs px-3 py-1.5 rounded-md bg-error-soft text-error hover:bg-error-soft/70 transition-colors flex items-center gap-1.5"
                   >
                     <Trash2 className="h-3 w-3" /> Delete
                   </button>
@@ -225,10 +229,10 @@ export default function EventsPage() {
           <p className="text-xs text-muted-foreground">{total} total events</p>
           <div className="flex gap-2">
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
           </div>
         </div>
       )}
@@ -293,7 +297,7 @@ export default function EventsPage() {
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel disabled={deleting}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-[#C0392B] hover:bg-[#a93226] text-white disabled:opacity-50">
+            <AlertDialogAction onClick={handleDelete} disabled={deleting} className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50">
               {deleting ? "Deleting…" : "Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>

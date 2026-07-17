@@ -77,7 +77,7 @@ export default function AdminDonationsOverviewPage() {
           <div
             key={label}
             className={`rounded-xl border p-4 sm:p-5 flex flex-col gap-2 ${
-              accent ? "bg-primary text-primary-foreground border-primary" : "bg-white border-border/30"
+              accent ? "bg-primary text-primary-foreground border-primary" : "bg-card border-border/30"
             }`}
           >
             <div className="flex items-center gap-2">
@@ -108,7 +108,7 @@ export default function AdminDonationsOverviewPage() {
       </div>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_1fr_1fr_1fr_100px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[760px] md:min-w-0">
           {["Masjid", "Net donations", "Disbursed", "Balance", ""].map((h, i) => (
             <p
@@ -145,7 +145,7 @@ export default function AdminDonationsOverviewPage() {
               <div className="flex justify-end">
                 <button
                   onClick={() => router.push(`/admin/masjids/${m.masjid_id}/donations`)}
-                  className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors"
                 >
                   View
                 </button>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, startTransition } from "react";
+import { useEffect, useState } from "react";
 import { Download } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { adminApi } from "@/lib/api/admin";
@@ -26,9 +26,12 @@ export default function AnalyticsPage() {
   const [demoLoading, setDemoLoading] = useState(true);
 
   useEffect(() => {
-    startTransition(() => {
-      setLoading(true);
-    });
+    // Showing the skeleton is urgent UI feedback — set it eagerly (not inside a
+    // transition, which would let React defer it behind the fetch). This is an
+    // intentional load-start state update, so the set-state-in-effect rule is
+    // suppressed for this line only.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setLoading(true);
     adminApi.getUserGrowth(period)
       .then(res => setData(res.data ?? []))
       .catch(() => toast.error("Failed to load analytics"))
@@ -77,13 +80,13 @@ export default function AnalyticsPage() {
           <button
             onClick={exportGrowthCSV}
             disabled={data.length === 0}
-            className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground disabled:opacity-40 transition-colors flex items-center gap-1.5"
+            className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground disabled:opacity-40 transition-colors flex items-center gap-1.5"
           >
             <Download className="h-3.5 w-3.5" /> Export CSV
           </button>
 
           {/* Period switcher */}
-          <div className="flex gap-1 bg-white border border-border/30 rounded-lg p-1 shadow-sm">
+          <div className="flex gap-1 bg-card border border-border/30 rounded-lg p-1 shadow-sm">
             {(["daily", "weekly", "monthly"] as Period[]).map(p => (
               <button
                 key={p}
@@ -104,17 +107,17 @@ export default function AnalyticsPage() {
       {/* Summary strip */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {loading ? Array(3).fill(0).map((_, i) => <Skeleton key={i} className="h-20 rounded-xl" />) : (<>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Total Registrations</p>
             <p className="font-heading text-2xl font-bold text-foreground">{total}</p>
             <p className="text-xs text-muted-foreground capitalize">{period} view</p>
           </div>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Peak {period === "daily" ? "Day" : period === "weekly" ? "Week" : "Month"}</p>
             <p className="font-heading text-2xl font-bold text-foreground">{peak.count}</p>
             <p className="text-xs text-muted-foreground">{peak.period ? formatLabel(peak.period, period) : "—"}</p>
           </div>
-          <div className="bg-white rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
+          <div className="bg-card rounded-xl p-4 flex flex-col gap-1.5 shadow-sm border border-border/30">
             <p className="text-xs text-muted-foreground">Range</p>
             <p className="font-heading text-lg font-bold text-foreground leading-tight">
               {data.length > 0
@@ -127,7 +130,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Chart */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
         <h2 className="font-semibold text-foreground text-sm">
           User Registrations — <span className="capitalize">{period}</span>
         </h2>
@@ -158,7 +161,7 @@ export default function AnalyticsPage() {
       </div>
 
       {/* Demographics */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
         <h2 className="font-semibold text-foreground text-sm">User Demographics — Madhab</h2>
         {demoLoading ? (
           <Skeleton className="h-32 rounded-lg" />

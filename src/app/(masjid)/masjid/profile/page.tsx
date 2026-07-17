@@ -185,7 +185,7 @@ export default function MasjidProfilePage() {
           /* ── EDIT MODE ── */
           <>
             {/* Basic Info — edit */}
-            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+            <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
               <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
               <div className="flex flex-col gap-1.5">
                 <Label>Masjid Name</Label>
@@ -203,7 +203,7 @@ export default function MasjidProfilePage() {
                 <div className="flex flex-col gap-1.5">
                   <Label htmlFor="profile-timezone">Timezone</Label>
                   <select id="profile-timezone" value={form.timezone ?? "Asia/Dhaka"} onChange={e => set("timezone", e.target.value)}
-                    className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
+                    className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                     <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                     <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
                     <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>
@@ -233,7 +233,7 @@ export default function MasjidProfilePage() {
             </div>
 
             {/* Facilities — edit */}
-            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
               <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
               <div className="flex flex-col gap-3">
                 {FACILITY_LABELS.map(({ key, label }) => (
@@ -279,7 +279,7 @@ export default function MasjidProfilePage() {
           /* ── VIEW MODE ── */
           <>
             {/* Basic Info — view */}
-            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+            <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
               <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
 
               <Field label="Masjid Name" value={masjid.name} />
@@ -308,7 +308,7 @@ export default function MasjidProfilePage() {
             </div>
 
             {/* Facilities — view */}
-            <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+            <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
               <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
 
               <div className="flex flex-wrap gap-2">
@@ -319,7 +319,7 @@ export default function MasjidProfilePage() {
                       key={key}
                       className={`inline-flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-full border ${
                         active
-                          ? "bg-[#D4EDDA] text-[#155724] border-[#c3e6cb]"
+                          ? "bg-primary-soft text-primary border-primary/30"
                           : "bg-muted/40 text-muted-foreground border-border/30"
                       }`}
                     >

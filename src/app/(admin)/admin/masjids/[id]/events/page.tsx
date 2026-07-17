@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Users } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { masjidsApi, type MasjidEvent, type EventAttendee } from "@/lib/api/masjids";
 import { toast } from "sonner";
@@ -61,13 +62,13 @@ export default function AdminMasjidEventsPage() {
           {[1, 2, 3].map(i => <Skeleton key={i} className="h-28 rounded-xl" />)}
         </div>
       ) : events.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No events</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
           {events.map(ev => (
-            <div key={ev.event_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+            <div key={ev.event_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-base">{ev.title}</h3>
@@ -75,7 +76,7 @@ export default function AdminMasjidEventsPage() {
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{ev.description}</p>
                 </div>
                 {ev.rsvp_enabled && (
-                  <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-[#D4EDDA] text-[#155724] shrink-0">RSVP On</span>
+                  <StatusBadge tone="success" className="shrink-0">RSVP On</StatusBadge>
                 )}
               </div>
               <div className="flex items-center justify-between">
@@ -86,7 +87,7 @@ export default function AdminMasjidEventsPage() {
                 {ev.rsvp_enabled && (
                   <button
                     onClick={() => openAttendees(ev)}
-                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
+                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                   >
                     <Users className="h-3 w-3" /> Attendees
                   </button>
@@ -102,10 +103,10 @@ export default function AdminMasjidEventsPage() {
           <p className="text-xs text-muted-foreground">{total} total events</p>
           <div className="flex gap-2">
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
           </div>
         </div>
       )}

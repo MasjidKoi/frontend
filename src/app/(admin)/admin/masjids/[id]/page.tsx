@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { BadgeCheck, Save, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
@@ -67,10 +68,10 @@ interface MasjidDetail {
 interface PrayerTime { fajr_azan: string; dhuhr_azan: string; asr_azan: string; maghrib_azan: string; isha_azan: string; }
 
 const STATUS_STYLES: Record<string, string> = {
-  active:    "bg-[#D4EDDA] text-[#155724]",
-  pending:   "bg-[#FFF3CD] text-[#7a5500]",
-  suspended: "bg-[#FFEDED] text-[#C0392B]",
-  removed:   "bg-muted text-muted-foreground",
+  active:    statusToneClasses.success,
+  pending:   statusToneClasses.warning,
+  suspended: statusToneClasses.error,
+  removed:   statusToneClasses.neutral,
 };
 
 const FACILITY_LABELS: { key: keyof Facilities; label: string }[] = [
@@ -263,7 +264,7 @@ export default function MasjidDetailPage() {
         <div className="flex-1 flex flex-col gap-5">
 
           {/* Basic Information */}
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-5">
             <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Basic Information</h2>
 
             <div className="flex flex-col gap-1.5">
@@ -287,7 +288,7 @@ export default function MasjidDetailPage() {
                   id="masjid-timezone"
                   value={form.timezone ?? "Asia/Dhaka"}
                   onChange={e => set("timezone", e.target.value)}
-                  className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
+                  className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30"
                 >
                   <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                   <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
@@ -320,7 +321,7 @@ export default function MasjidDetailPage() {
           </div>
 
           {/* Facilities */}
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-6 flex flex-col gap-4">
             <h2 className="font-semibold text-foreground border-b border-border/30 pb-3">Facilities</h2>
 
             <div className="flex flex-col gap-3">
@@ -410,7 +411,7 @@ export default function MasjidDetailPage() {
           </div>
 
           {/* Prayer Times */}
-          <div className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-4">
+          <div className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-4">
             <h2 className="font-semibold text-foreground text-sm">Today&apos;s Prayer Times</h2>
             {prayerTimes ? (
               <div className="overflow-x-auto [-webkit-overflow-scrolling:touch] -mx-1">
@@ -435,8 +436,8 @@ export default function MasjidDetailPage() {
           </div>
 
           {/* Danger Zone */}
-          <div className="bg-white rounded-xl border-2 border-[#FFEDED] p-5 flex flex-col gap-3">
-            <h2 className="font-semibold text-[#C0392B] text-sm flex items-center gap-1.5">
+          <div className="bg-card rounded-xl border-2 border-error-soft p-5 flex flex-col gap-3">
+            <h2 className="font-semibold text-destructive text-sm flex items-center gap-1.5">
               <AlertTriangle className="h-4 w-4" /> Danger Zone
             </h2>
             <p className="text-xs text-muted-foreground leading-relaxed">
@@ -444,13 +445,13 @@ export default function MasjidDetailPage() {
             </p>
             <button
               onClick={() => setRemoveOpen(true)}
-              className="w-full h-9 rounded-lg border border-[#C0392B] text-[#C0392B] text-sm hover:bg-[#FFEDED] transition-colors"
+              className="w-full h-9 rounded-lg border border-destructive text-destructive text-sm hover:bg-error-soft transition-colors"
             >
               Remove Masjid
             </button>
             <button
               onClick={() => { setMergeTargetId(""); setMergeOpen(true); }}
-              className="w-full h-9 rounded-lg border border-[#C0392B] text-[#C0392B] text-sm hover:bg-[#FFEDED] transition-colors"
+              className="w-full h-9 rounded-lg border border-destructive text-destructive text-sm hover:bg-error-soft transition-colors"
             >
               Merge into Another…
             </button>
@@ -479,7 +480,7 @@ export default function MasjidDetailPage() {
             <Button
               onClick={confirmSuspend}
               disabled={suspendReason.length < 10 || suspendLoading}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {suspendLoading ? "Suspending…" : "Suspend"}
             </Button>
@@ -501,7 +502,7 @@ export default function MasjidDetailPage() {
             <AlertDialogAction
               onClick={handleRemove}
               disabled={removing}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white disabled:opacity-50"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 disabled:opacity-50"
             >
               {removing ? "Removing…" : "Remove Masjid"}
             </AlertDialogAction>
@@ -531,7 +532,7 @@ export default function MasjidDetailPage() {
             <Button
               onClick={handleMerge}
               disabled={!mergeTargetId.trim() || mergeLoading}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {mergeLoading ? "Merging…" : "Merge & Delete This Masjid"}
             </Button>

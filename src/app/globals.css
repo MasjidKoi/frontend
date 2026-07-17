@@ -47,6 +47,9 @@
   --color-accent-gold-soft: var(--accent-gold-soft);
   --color-error: var(--error);
   --color-error-soft: var(--error-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-destructive-foreground: var(--destructive-foreground);
   --color-surface: var(--surface);
   --color-surface-inverse: var(--surface-inverse);
   --color-surface-inverse-raised: var(--surface-inverse-raised);
@@ -104,8 +107,13 @@
 
   /* Destructive / error */
   --destructive: #C2453E;
+  --destructive-foreground: #FFFFFF;
   --error: #C2453E;
   --error-soft: #F7E7E6;
+
+  /* Info — muted palette blue (support/reports statuses) */
+  --info: #2C5A8C;
+  --info-soft: #E3ECF5;
 
   /* Text scale */
   --text-secondary: #57645D;
@@ -181,8 +189,13 @@
   --accent-gold-soft: #2A2412;
 
   --destructive: #C2453E;
+  --destructive-foreground: #FFFFFF;
   --error: #C2453E;
   --error-soft: #2A1817;
+
+  /* Info — muted palette blue (dark) */
+  --info: #8FB8E6;
+  --info-soft: #17232F;
 
   --text-secondary: #FFFFFF99;
   --text-muted: #FFFFFF66;

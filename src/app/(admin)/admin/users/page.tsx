@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge, statusToneClasses } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -27,10 +28,12 @@ interface AdminUser {
 
 interface Masjid { masjid_id: string; name: string; admin_region: string; }
 
+// Consistent soft-tone pills for all roles (was a solid bg-primary pill mixed
+// with soft pills, and hardcoded text-white instead of the semantic token).
 const ROLE_STYLES: Record<string, string> = {
-  platform_admin: "bg-primary text-white",
-  masjid_admin:   "bg-secondary text-primary",
-  madrasha_admin: "bg-[#FFF3CD] text-[#7a5500]",
+  platform_admin: statusToneClasses.info,
+  masjid_admin:   statusToneClasses.success,
+  madrasha_admin: statusToneClasses.warning,
 };
 
 const inviteSchema = z.object({
@@ -104,7 +107,7 @@ export default function UsersPage() {
       </div>
 
       {/* User table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[640px] md:min-w-0">
           {["Email", "Role", "Scoped To", "Status"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -136,9 +139,9 @@ export default function UsersPage() {
               ) : <span className="text-sm text-muted-foreground">—</span>}
             </div>
             <span className="text-sm text-muted-foreground truncate">{getMasjidName(u.masjid_id)}</span>
-            <span className={`text-xs font-medium px-2 py-1 rounded-full w-fit ${u.confirmed_at ? "bg-[#D4EDDA] text-[#155724]" : "bg-[#FFF3CD] text-[#7a5500]"}`}>
+            <StatusBadge tone={u.confirmed_at ? "success" : "warning"}>
               {u.confirmed_at ? "Active" : "Invited"}
-            </span>
+            </StatusBadge>
           </div>
         ))}
       </div>
@@ -160,7 +163,7 @@ export default function UsersPage() {
 
             <div className="flex flex-col gap-1.5">
               <Label htmlFor="inv-role">Role *</Label>
-              <select id="inv-role" {...register("role")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
+              <select id="inv-role" {...register("role")} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                 <option value="masjid_admin">Masjid Admin</option>
                 <option value="madrasha_admin">Madrasha Admin</option>
                 <option value="platform_admin">Platform Admin</option>
@@ -170,7 +173,7 @@ export default function UsersPage() {
             {role === "masjid_admin" && (
               <div className="flex flex-col gap-1.5">
                 <Label htmlFor="inv-masjid">Assign to Masjid</Label>
-                <select id="inv-masjid" {...register("masjid_id")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
+                <select id="inv-masjid" {...register("masjid_id")} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                   <option value="">— Select a masjid (optional) —</option>
                   {masjids.map(m => (
                     <option key={m.masjid_id} value={m.masjid_id}>{m.name} · {m.admin_region}</option>

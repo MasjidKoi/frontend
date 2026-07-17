@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { BarChart2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
+import { statusToneClasses } from "@/components/ui/status-badge";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { masjidsApi, type Campaign, type CampaignAnalytics } from "@/lib/api/masjids";
 import { toast } from "sonner";
@@ -12,9 +13,9 @@ import { toast } from "sonner";
 const PAGE_SIZE = 20;
 
 const STATUS_STYLES: Record<string, string> = {
-  Active:    "bg-[#D4EDDA] text-[#155724]",
-  Completed: "bg-[#D4EDDA] text-[#155724]",
-  Cancelled: "bg-[#FFEDED] text-[#C0392B]",
+  Active:    statusToneClasses.success,
+  Completed: statusToneClasses.success,
+  Cancelled: statusToneClasses.error,
 };
 
 export default function AdminMasjidCampaignsPage() {
@@ -62,13 +63,13 @@ export default function AdminMasjidCampaignsPage() {
           {[1, 2].map(i => <Skeleton key={i} className="h-36 rounded-xl" />)}
         </div>
       ) : campaigns.length === 0 ? (
-        <div className="bg-white rounded-xl border border-border/30 p-10 text-center">
+        <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No campaigns</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
           {campaigns.map(c => (
-            <div key={c.campaign_id} className="bg-white rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
+            <div key={c.campaign_id} className="bg-card rounded-xl shadow-sm border border-border/30 p-5 flex flex-col gap-3">
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <h3 className="font-semibold text-foreground text-base">{c.title}</h3>
@@ -93,7 +94,7 @@ export default function AdminMasjidCampaignsPage() {
                   </p>
                   <button
                     onClick={() => openAnalytics(c)}
-                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
+                    className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-foreground transition-colors flex items-center gap-1.5"
                   >
                     <BarChart2 className="h-3 w-3" /> Analytics
                   </button>
@@ -108,10 +109,10 @@ export default function AdminMasjidCampaignsPage() {
           <p className="text-xs text-muted-foreground">{total} total campaigns</p>
           <div className="flex gap-2">
             <button disabled={page === 1} onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button disabled={page * PAGE_SIZE >= total} onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed">Next →</button>
           </div>
         </div>
       )}

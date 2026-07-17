@@ -95,7 +95,7 @@ export default function CreateMasjidPage() {
       </div>
 
       {/* Form card */}
-      <form onSubmit={handleSubmit(onSubmit)} className="bg-white rounded-xl shadow-sm border border-border/30 p-4 sm:p-6 md:p-8 flex flex-col gap-6 md:gap-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="bg-card rounded-xl shadow-sm border border-border/30 p-4 sm:p-6 md:p-8 flex flex-col gap-6 md:gap-8">
 
         {/* Basic Info */}
         <div className="flex flex-col gap-5">
@@ -116,7 +116,7 @@ export default function CreateMasjidPage() {
           </MasjidFormField>
           <div className="w-full sm:max-w-xs">
             <MasjidFormField id="timezone" label="Timezone">
-              <select id="timezone" {...register("timezone")} className="h-9 w-full rounded-md border border-input bg-white px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
+              <select id="timezone" {...register("timezone")} className="h-9 w-full rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-2 focus:ring-ring/30">
                 <option value="Asia/Dhaka">Asia/Dhaka (UTC+6)</option>
                 <option value="Asia/Karachi">Asia/Karachi (UTC+5)</option>
                 <option value="Asia/Kolkata">Asia/Kolkata (UTC+5:30)</option>

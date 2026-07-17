@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Search, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/ui/status-badge";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -122,7 +123,7 @@ export default function AppUsersPage() {
           <p className="text-sm text-muted-foreground mt-0.5">Mobile app users — suspend, unsuspend, or remove accounts</p>
         </div>
         {total > 0 && (
-          <span className="text-sm text-muted-foreground bg-white border border-border/40 rounded-lg px-3 py-1.5 shadow-sm">
+          <span className="text-sm text-muted-foreground bg-card border border-border/40 rounded-lg px-3 py-1.5 shadow-sm">
             {total} total users
           </span>
         )}
@@ -144,7 +145,7 @@ export default function AppUsersPage() {
       </form>
 
       {/* Table */}
-      <div className="bg-white rounded-xl shadow-sm border border-border/30 overflow-x-auto">
+      <div className="bg-card rounded-xl shadow-sm border border-border/30 overflow-x-auto">
         <div className="grid grid-cols-[2fr_100px_100px_120px_160px] gap-4 px-5 h-11 bg-muted/50 items-center border-b border-border/30 min-w-[760px] md:min-w-0">
           {["Display Name", "Status", "Madhab", "Joined", "Actions"].map(h => (
             <p key={h} className="text-xs font-semibold text-muted-foreground">{h}</p>
@@ -169,13 +170,9 @@ export default function AppUsersPage() {
               <p className="text-sm font-medium text-foreground">{u.display_name ?? <span className="text-muted-foreground">—</span>}</p>
               <p className="text-xs text-muted-foreground font-mono">{u.user_id.slice(0, 8)}…</p>
             </div>
-            <span className={`text-xs font-medium px-2.5 py-1 rounded-full w-fit ${
-              u.is_suspended
-                ? "bg-[#FFEDED] text-[#C0392B]"
-                : "bg-[#D4EDDA] text-[#155724]"
-            }`}>
+            <StatusBadge tone={u.is_suspended ? "error" : "success"}>
               {u.is_suspended ? "Suspended" : "Active"}
-            </span>
+            </StatusBadge>
             <p className="text-sm text-muted-foreground capitalize">{u.madhab ?? "—"}</p>
             <p className="text-sm text-muted-foreground">{timeAgo(u.created_at)}</p>
             <div className="flex gap-2">
@@ -183,14 +180,14 @@ export default function AppUsersPage() {
                 <button
                   onClick={() => handleUnsuspend(u)}
                   disabled={unsuspendingId === u.user_id}
-                  className="text-xs px-3 py-1.5 rounded-md bg-muted text-accent hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-xs px-3 py-1.5 rounded-md bg-primary-soft text-primary hover:bg-primary-soft/70 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {unsuspendingId === u.user_id ? "Unsuspending…" : "Unsuspend"}
                 </button>
               ) : (
                 <button
                   onClick={() => { setSuspendTarget(u); setSuspendReason(""); }}
-                  className="text-xs px-3 py-1.5 rounded-md bg-[#FFEDED] text-[#C0392B] hover:bg-[#ffd9d9] transition-colors"
+                  className="text-xs px-3 py-1.5 rounded-md bg-error-soft text-error hover:bg-error-soft/70 transition-colors"
                 >
                   Suspend
                 </button>
@@ -198,7 +195,7 @@ export default function AppUsersPage() {
               <button
                 onClick={() => setDeleteTarget(u)}
                 aria-label="Delete user"
-                className="text-xs px-2 py-1.5 rounded-md border border-border bg-white hover:bg-muted text-muted-foreground transition-colors"
+                className="text-xs px-2 py-1.5 rounded-md border border-border bg-card hover:bg-muted text-muted-foreground transition-colors"
               >
                 <Trash2 className="h-3.5 w-3.5" />
               </button>
@@ -215,13 +212,13 @@ export default function AppUsersPage() {
             <button
               disabled={page === 1}
               onClick={() => setPage(p => p - 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >← Previous</button>
             <span className="text-xs px-3 py-1.5 text-muted-foreground">Page {page}</span>
             <button
               disabled={page * PAGE_SIZE >= total}
               onClick={() => setPage(p => p + 1)}
-              className="text-xs px-3 py-1.5 rounded-md border border-border bg-white hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
+              className="text-xs px-3 py-1.5 rounded-md border border-border bg-card hover:bg-muted disabled:opacity-40 disabled:cursor-not-allowed transition-colors"
             >Next →</button>
           </div>
         </div>
@@ -254,7 +251,7 @@ export default function AppUsersPage() {
             <Button
               onClick={handleSuspend}
               disabled={suspendReason.length < 1 || suspendLoading}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               {suspendLoading ? "Suspending…" : "Suspend"}
             </Button>
@@ -275,7 +272,7 @@ export default function AppUsersPage() {
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
-              className="bg-[#C0392B] hover:bg-[#a93226] text-white"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
