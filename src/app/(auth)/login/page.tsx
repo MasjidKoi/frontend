@@ -72,7 +72,7 @@ function LoginForm() {
       {/* Left panel — dark green */}
       <div className="hidden lg:flex flex-col justify-between w-[480px] shrink-0 bg-primary text-primary-foreground p-14">
         <div className="flex items-center gap-2.5">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-white text-xl font-bold">
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-accent text-accent-foreground text-xl font-bold">
             م
           </div>
           <span className="font-heading text-lg font-bold">MasjidKoi</span>
@@ -82,7 +82,7 @@ function LoginForm() {
           <h2 className="font-heading text-3xl font-bold leading-tight text-white max-w-xs">
             &ldquo;Connecting worshippers with their nearest masjid&rdquo;
           </h2>
-          <p className="text-secondary/80 text-sm leading-relaxed max-w-xs">
+          <p className="text-primary-foreground/80 text-sm leading-relaxed max-w-xs">
             The platform for Muslim communities across Bangladesh.
           </p>
         </div>
@@ -95,7 +95,7 @@ function LoginForm() {
           ].map(({ num, label }) => (
             <div key={label} className="flex flex-col gap-1">
               <span className="font-heading font-bold text-xl text-white font-mono">{num}</span>
-              <span className="text-xs text-muted-foreground">{label}</span>
+              <span className="text-xs text-primary-foreground/70">{label}</span>
             </div>
           ))}
         </div>
@@ -132,7 +132,7 @@ function LoginForm() {
                 <Label htmlFor="password" className="text-sm font-medium">Password</Label>
                 <Link
                   href="/password/forgot"
-                  className="text-xs text-accent hover:underline"
+                  className="text-xs text-primary hover:underline"
                 >
                   Forgot password?
                 </Link>

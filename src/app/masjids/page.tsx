@@ -65,14 +65,14 @@ export default function MasjidsListPage() {
       <header className="sticky top-0 z-10 bg-primary shadow-sm">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 text-white">
-            <div className="h-7 w-7 rounded-lg bg-accent flex items-center justify-center text-base font-bold">
+            <div className="h-7 w-7 rounded-lg bg-accent text-accent-foreground flex items-center justify-center text-base font-bold">
               م
             </div>
             <span className="font-heading font-bold">MasjidKoi</span>
           </Link>
           <Link
             href="/"
-            className="flex items-center gap-1.5 text-sm text-secondary/70 hover:text-white transition-colors"
+            className="flex items-center gap-1.5 text-sm text-primary-foreground/70 hover:text-white transition-colors"
           >
             <ArrowLeft className="h-4 w-4" /> Home
           </Link>
@@ -140,14 +140,14 @@ export default function MasjidsListPage() {
                       </div>
                     </div>
                     {m.verified && (
-                      <div className="flex items-center gap-1 bg-accent/10 text-accent rounded-full px-2 py-0.5 shrink-0">
+                      <div className="flex items-center gap-1 bg-accent/10 text-primary rounded-full px-2 py-0.5 shrink-0">
                         <BadgeCheck className="h-3.5 w-3.5" />
                         <span className="text-[11px] font-medium">Verified</span>
                       </div>
                     )}
                   </div>
 
-                  <div className="flex items-center gap-1.5 text-xs text-accent font-medium">
+                  <div className="flex items-center gap-1.5 text-xs text-primary font-medium">
                     <Timer className="h-3.5 w-3.5" />
                     View prayer times & announcements →
                   </div>

@@ -80,17 +80,17 @@ function MasjidSidebarFooter({
     <>
       <div className="h-px bg-white/10" />
       <div className="flex items-center gap-2.5 px-4 h-[60px] shrink-0">
-        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-white shrink-0">
+        <div className="h-8 w-8 rounded-full bg-accent flex items-center justify-center text-xs font-bold text-accent-foreground shrink-0">
           {userEmail?.[0]?.toUpperCase() ?? "A"}
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-xs font-semibold text-white truncate">Masjid Admin</p>
-          <p className="text-[11px] text-white/50 truncate">{userEmail}</p>
+          <p className="text-[11px] text-white/70 truncate">{userEmail}</p>
         </div>
         <button
           type="button"
           onClick={onLogout}
-          className="text-white/40 hover:text-white transition-colors shrink-0"
+          className="text-white/70 hover:text-white transition-colors shrink-0"
         >
           <LogOut className="h-4 w-4" />
         </button>
@@ -132,7 +132,7 @@ export default function MasjidLayout({ children }: { children: React.ReactNode }
     <div className="flex h-dvh min-h-0 bg-background overflow-hidden">
       <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-primary text-primary-foreground">
         <div className="flex items-center gap-2.5 px-5 h-14 shrink-0">
-          <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center text-lg font-bold">
+          <div className="h-8 w-8 rounded-lg bg-accent text-accent-foreground flex items-center justify-center text-lg font-bold">
             م
           </div>
           <span className="font-heading font-bold text-base">MasjidKoi</span>
@@ -140,7 +140,7 @@ export default function MasjidLayout({ children }: { children: React.ReactNode }
         <div className="h-px bg-white/10" />
         {masjidName && (
           <div className="px-5 py-3 shrink-0">
-            <p className="text-xs text-white/40 uppercase tracking-wide mb-0.5">Managing</p>
+            <p className="text-xs text-white/70 uppercase tracking-wide mb-0.5">Managing</p>
             <p className="text-sm font-semibold text-white truncate">{masjidName}</p>
           </div>
         )}
@@ -159,14 +159,14 @@ export default function MasjidLayout({ children }: { children: React.ReactNode }
           </SheetHeader>
           <div className="flex flex-col h-full min-h-0">
             <div className="flex items-center gap-2.5 px-5 h-14 shrink-0 border-b border-white/10">
-              <div className="h-8 w-8 rounded-lg bg-accent flex items-center justify-center text-lg font-bold">
+              <div className="h-8 w-8 rounded-lg bg-accent text-accent-foreground flex items-center justify-center text-lg font-bold">
                 م
               </div>
               <span className="font-heading font-bold text-base">MasjidKoi</span>
             </div>
             {masjidName && (
               <div className="px-5 py-3 shrink-0 border-b border-white/10">
-                <p className="text-xs text-white/40 uppercase tracking-wide mb-0.5">Managing</p>
+                <p className="text-xs text-white/70 uppercase tracking-wide mb-0.5">Managing</p>
                 <p className="text-sm font-semibold text-white truncate">{masjidName}</p>
               </div>
             )}

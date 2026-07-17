@@ -57,7 +57,7 @@ export default function ForgotPasswordPage() {
             Didn&apos;t receive it? Check your spam folder or{" "}
             <button
               onClick={() => setSubmitted(false)}
-              className="text-accent hover:underline"
+              className="text-primary hover:underline"
             >
               try again
             </button>
@@ -91,7 +91,7 @@ export default function ForgotPasswordPage() {
         <div className="rounded-2xl border border-border/40 bg-card shadow-sm p-8 flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <div className="h-12 w-12 rounded-xl bg-primary flex items-center justify-center">
-              <Mail className="h-6 w-6 text-secondary" />
+              <Mail className="h-6 w-6 text-primary-foreground" />
             </div>
             <div className="flex flex-col gap-1">
               <h1 className="font-heading text-xl font-bold text-foreground">

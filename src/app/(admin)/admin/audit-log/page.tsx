@@ -82,7 +82,7 @@ export default function AuditLogPage() {
                 className={`h-2 w-2 rounded-full shrink-0 ${
                   e.action.includes("suspend") || e.action.includes("delete")
                     ? "bg-error"
-                    : ACTION_COLOR[e.action] ?? "bg-accent"
+                    : ACTION_COLOR[e.action] ?? "bg-primary"
                 }`}
               />
               <span className="text-sm font-mono font-medium text-foreground">{e.action}</span>

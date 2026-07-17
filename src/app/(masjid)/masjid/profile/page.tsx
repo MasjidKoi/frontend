@@ -155,7 +155,7 @@ export default function MasjidProfilePage() {
         <div className="flex items-center gap-3">
           <h1 className="font-heading text-2xl font-bold text-foreground">{masjid.name}</h1>
           {masjid.verified && (
-            <div className="flex items-center gap-1 bg-accent/10 text-accent rounded-full px-2.5 py-1">
+            <div className="flex items-center gap-1 bg-accent/10 text-primary rounded-full px-2.5 py-1">
               <BadgeCheck className="h-4 w-4" />
               <span className="text-xs font-medium">Verified</span>
             </div>

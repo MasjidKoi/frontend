@@ -104,13 +104,13 @@ export default function EnrollPage() {
         {/* Header */}
         <div className="bg-primary px-9 py-8 flex flex-col items-center gap-4">
           <div className="h-14 w-14 rounded-2xl bg-accent flex items-center justify-center">
-            <ShieldCheck className="h-7 w-7 text-secondary" />
+            <ShieldCheck className="h-7 w-7 text-accent-foreground" />
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="font-heading text-xl font-bold text-white">
               Set up Two-Factor Authentication
             </h1>
-            <p className="text-sm text-secondary/80 leading-relaxed max-w-sm">
+            <p className="text-sm text-primary-foreground/80 leading-relaxed max-w-sm">
               Required for all platform admins. Protects your account with a second verification step.
             </p>
           </div>
@@ -154,7 +154,7 @@ export default function EnrollPage() {
                       {secretKey || "Loading…"}
                     </span>
                     <button onClick={copySecret} className="shrink-0 text-muted-foreground hover:text-foreground">
-                      {copied ? <Check className="h-3.5 w-3.5 text-accent" /> : <Copy className="h-3.5 w-3.5" />}
+                      {copied ? <Check className="h-3.5 w-3.5 text-primary" /> : <Copy className="h-3.5 w-3.5" />}
                     </button>
                   </div>
                 </div>

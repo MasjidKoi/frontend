@@ -113,9 +113,9 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">registered mobile users</p>
           </div>
           <div className="bg-primary rounded-xl p-5 flex flex-col gap-2">
-            <p className="text-sm text-secondary/80">Announcements</p>
+            <p className="text-sm text-primary-foreground/80">Announcements</p>
             <p className="font-heading text-4xl font-bold text-white">{stats?.total_announcements ?? 0}</p>
-            <p className="text-xs text-white/50">{stats?.published_announcements ?? 0} published</p>
+            <p className="text-xs text-white/70">{stats?.published_announcements ?? 0} published</p>
           </div>
         </>)}
       </div>
@@ -149,7 +149,7 @@ export default function DashboardPage() {
         <div className="flex-1 min-w-0 bg-card rounded-xl shadow-sm border border-border/30 overflow-hidden">
           <div className="flex items-center justify-between px-5 py-4 border-b border-border/30">
             <p className="font-semibold text-sm text-foreground">Recent Masjids</p>
-            <Link href="/admin/masjids" className="text-xs text-accent hover:underline">View all →</Link>
+            <Link href="/admin/masjids" className="text-xs text-primary hover:underline">View all →</Link>
           </div>
           {loading ? (
             <div className="p-5 flex flex-col gap-3">
@@ -189,7 +189,7 @@ export default function DashboardPage() {
             <p className="font-semibold text-sm text-foreground">Recent Activity</p>
             {loading ? <Skeleton className="h-16" /> : audit.slice(0, 3).map((e, i) => (
               <div key={i} className="flex gap-2.5 items-start">
-                <div className="h-2 w-2 rounded-full bg-accent mt-1.5 shrink-0" />
+                <div className="h-2 w-2 rounded-full bg-primary mt-1.5 shrink-0" />
                 <div>
                   <p className="text-xs font-medium text-foreground font-mono">{e.action}</p>
                   <p className="text-[11px] text-muted-foreground">{timeAgo(e.created_at)} · {e.admin_email?.split("@")[0]}</p>

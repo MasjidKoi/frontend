@@ -175,7 +175,7 @@ export default function PlatformAnnouncementsPage() {
       ) : items.length === 0 ? (
         <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No announcements yet</p>
-          <button onClick={openCreate} className="text-accent text-sm hover:underline mt-1">Create the first one →</button>
+          <button onClick={openCreate} className="text-primary text-sm hover:underline mt-1">Create the first one →</button>
         </div>
       ) : (
         <div className="flex flex-col gap-4">
@@ -184,7 +184,7 @@ export default function PlatformAnnouncementsPage() {
               <div className="flex items-start justify-between gap-4">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                    <span className="text-xs font-medium bg-accent/10 text-accent rounded-full px-2.5 py-0.5 shrink-0">
+                    <span className="text-xs font-medium bg-accent/10 text-primary rounded-full px-2.5 py-0.5 shrink-0">
                       {ann.masjid_name}
                     </span>
                     {ann.posted_by_email && (

@@ -34,7 +34,7 @@ export function Features() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center gap-10 md:gap-14">
         {/* Header */}
         <FadeUp className="flex flex-col items-center gap-3 text-center">
-          <span className="text-xs font-semibold text-accent tracking-[0.15em] uppercase">
+          <span className="text-xs font-semibold text-primary tracking-[0.15em] uppercase">
             Features
           </span>
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-foreground max-w-md leading-tight">
@@ -62,7 +62,7 @@ export function Features() {
                     inverted ? "bg-accent" : "bg-primary"
                   }`}
                 >
-                  <Icon className="h-5 w-5 text-secondary" />
+                  <Icon className={`h-5 w-5 ${inverted ? "text-accent-foreground" : "text-primary-foreground"}`} />
                 </div>
                 <h3
                   className={`font-heading text-lg font-bold ${
@@ -73,7 +73,7 @@ export function Features() {
                 </h3>
                 <p
                   className={`text-sm leading-relaxed ${
-                    inverted ? "text-secondary/80" : "text-muted-foreground"
+                    inverted ? "text-primary-foreground/80" : "text-muted-foreground"
                   }`}
                 >
                   {description}

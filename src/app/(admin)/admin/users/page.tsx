@@ -121,7 +121,7 @@ export default function UsersPage() {
         ) : users.length === 0 ? (
           <div className="py-12 text-center">
             <p className="text-sm text-muted-foreground">No admin users yet</p>
-            <button onClick={() => setInviteOpen(true)} className="text-accent text-sm hover:underline mt-1">Invite the first admin →</button>
+            <button onClick={() => setInviteOpen(true)} className="text-primary text-sm hover:underline mt-1">Invite the first admin →</button>
           </div>
         ) : users.map(u => (
           <div key={u.id} className="grid grid-cols-[2fr_1fr_2fr_100px] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 min-w-[640px] md:min-w-0">

@@ -211,7 +211,7 @@ export default function PrayerTimesPage() {
             const isEditingAzan = editingAzan === key;
             const isEditingIqamah = editingIqamah === key;
 
-            const inputCls = `h-8 text-sm font-mono w-24 ${isFirst ? "bg-white/10 border-white/20 text-white placeholder:text-white/40" : ""}`;
+            const inputCls = `h-8 text-sm font-mono w-24 ${isFirst ? "bg-white/10 border-white/20 text-white placeholder:text-white/60" : ""}`;
             const displayCls = `flex items-center gap-2 rounded-lg px-3 py-1.5 text-sm font-mono transition-colors ${isFirst ? "bg-white/10 text-white hover:bg-white/20 w-full justify-between" : "bg-muted hover:bg-muted/70 text-foreground w-full justify-between border border-border/30"}`;
 
             return (
@@ -221,13 +221,13 @@ export default function PrayerTimesPage() {
                   isFirst ? "bg-primary text-white" : "bg-card shadow-sm border border-border/30"
                 }`}
               >
-                <p className={`text-xs font-semibold uppercase tracking-wide ${isFirst ? "text-secondary/70" : "text-muted-foreground"}`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${isFirst ? "text-primary-foreground/70" : "text-muted-foreground"}`}>
                   {label}
                 </p>
 
                 {/* AZAN — editable */}
                 <div>
-                  <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-secondary/50" : "text-muted-foreground"}`}>Azan</p>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-primary-foreground/70" : "text-muted-foreground"}`}>Azan</p>
                   {isEditingAzan ? (
                     <div className="flex items-center gap-1.5">
                       <Input
@@ -239,7 +239,7 @@ export default function PrayerTimesPage() {
                         onBlur={() => setEditingAzan(null)}
                         onKeyDown={e => { if (e.key === "Enter") setEditingAzan(null); }}
                       />
-                      <button onClick={() => setEditingAzan(null)} className={`shrink-0 ${isFirst ? "text-secondary/70" : "text-accent"}`}>
+                      <button onClick={() => setEditingAzan(null)} className={`shrink-0 ${isFirst ? "text-primary-foreground/70" : "text-primary"}`}>
                         <Check className="h-3.5 w-3.5" />
                       </button>
                     </div>
@@ -255,7 +255,7 @@ export default function PrayerTimesPage() {
 
                 {/* IQAMAH — editable */}
                 <div>
-                  <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-secondary/50" : "text-muted-foreground"}`}>Iqamah</p>
+                  <p className={`text-[10px] uppercase tracking-widest mb-1.5 ${isFirst ? "text-primary-foreground/70" : "text-muted-foreground"}`}>Iqamah</p>
                   {isEditingIqamah ? (
                     <div className="flex items-center gap-1.5">
                       <Input
@@ -267,7 +267,7 @@ export default function PrayerTimesPage() {
                         onBlur={() => setEditingIqamah(null)}
                         onKeyDown={e => { if (e.key === "Enter") setEditingIqamah(null); }}
                       />
-                      <button onClick={() => setEditingIqamah(null)} className={`shrink-0 ${isFirst ? "text-secondary/70" : "text-accent"}`}>
+                      <button onClick={() => setEditingIqamah(null)} className={`shrink-0 ${isFirst ? "text-primary-foreground/70" : "text-primary"}`}>
                         <Check className="h-3.5 w-3.5" />
                       </button>
                     </div>

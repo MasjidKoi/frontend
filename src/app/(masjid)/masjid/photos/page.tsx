@@ -125,7 +125,7 @@ export default function PhotosPage() {
           <p className="text-muted-foreground text-sm">No photos uploaded yet</p>
           <button
             onClick={() => fileRef.current?.click()}
-            className="text-accent text-sm hover:underline mt-1"
+            className="text-primary text-sm hover:underline mt-1"
           >
             Upload the first photo →
           </button>

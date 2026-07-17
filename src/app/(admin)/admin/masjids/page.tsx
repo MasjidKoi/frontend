@@ -207,7 +207,7 @@ export default function MasjidsPage() {
         ) : masjids.length === 0 ? (
           <div className="py-16 text-center">
             <p className="text-muted-foreground text-sm">No masjids found</p>
-            <Link href="/admin/masjids/new" className="text-accent text-sm hover:underline mt-1 block">Create the first one →</Link>
+            <Link href="/admin/masjids/new" className="text-primary text-sm hover:underline mt-1 block">Create the first one →</Link>
           </div>
         ) : masjids.map(m => (
           <div key={m.masjid_id} className="grid grid-cols-[2fr_1fr_120px_100px_1fr] gap-4 px-5 py-3.5 items-center border-b border-border/10 last:border-0 hover:bg-muted/20 transition-colors min-w-[900px] md:min-w-0">
@@ -221,7 +221,7 @@ export default function MasjidsPage() {
             </StatusBadge>
             <div className="flex items-center gap-1.5">
               {m.verified
-                ? <><BadgeCheck className="h-4 w-4 text-accent" /><span className="text-xs text-accent">Verified</span></>
+                ? <><BadgeCheck className="h-4 w-4 text-primary" /><span className="text-xs text-primary">Verified</span></>
                 : <span className="text-sm text-muted-foreground">—</span>
               }
             </div>
@@ -247,7 +247,7 @@ export default function MasjidsPage() {
                 <button
                   onClick={() => handleUnsuspend(m.masjid_id)}
                   disabled={unsuspendingId === m.masjid_id}
-                  className="text-xs px-3 py-1.5 rounded-md bg-muted text-accent hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="text-xs px-3 py-1.5 rounded-md bg-muted text-primary hover:bg-muted/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >{unsuspendingId === m.masjid_id ? "Unsuspending…" : "Unsuspend"}</button>
               )}
             </div>

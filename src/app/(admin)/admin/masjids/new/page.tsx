@@ -158,7 +158,7 @@ export default function CreateMasjidPage() {
             <Input id="admin_email" type="email" placeholder="imam@masjid.com" {...register("admin_email")} className={errors.admin_email ? "border-destructive" : ""} />
           </MasjidFormField>
           <div className="flex items-start gap-2.5 bg-secondary/50 rounded-lg p-3.5">
-            <Info className="h-4 w-4 text-accent mt-0.5 shrink-0" />
+            <Info className="h-4 w-4 text-primary mt-0.5 shrink-0" />
             <p className="text-sm text-secondary-foreground">An invite email will be sent via Brevo. The admin sets their password on first login.</p>
           </div>
         </div>

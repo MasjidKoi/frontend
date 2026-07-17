@@ -158,7 +158,7 @@ export default function CampaignsPage() {
       ) : campaigns.length === 0 ? (
         <div className="bg-card rounded-xl border border-border/30 p-10 text-center">
           <p className="text-muted-foreground text-sm">No campaigns yet</p>
-          <button onClick={openCreate} className="text-accent text-sm hover:underline mt-1">Create the first one →</button>
+          <button onClick={openCreate} className="text-primary text-sm hover:underline mt-1">Create the first one →</button>
         </div>
       ) : (
         <div className="flex flex-col gap-4">

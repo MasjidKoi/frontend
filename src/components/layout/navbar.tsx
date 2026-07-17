@@ -26,7 +26,7 @@ export function Navbar() {
     <header className="sticky top-0 z-50 w-full bg-primary text-primary-foreground">
       <div className="max-w-7xl mx-auto flex h-16 items-center justify-between gap-3 px-4 sm:px-6 lg:px-12 xl:px-16">
         <Link href="/" className="flex items-center gap-2.5 shrink-0 min-w-0">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-white text-lg font-bold">
+          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-accent text-accent-foreground text-lg font-bold">
             م
           </div>
           <span className="font-heading text-lg font-bold tracking-tight truncate">
@@ -39,7 +39,7 @@ export function Navbar() {
             <Link
               key={href}
               href={href}
-              className="text-sm text-secondary hover:text-white transition-colors"
+              className="text-sm text-primary-foreground hover:text-white transition-colors"
             >
               {label}
             </Link>
@@ -52,7 +52,7 @@ export function Navbar() {
               asChild
               variant="ghost"
               size="sm"
-              className="text-secondary hover:text-white hover:bg-accent"
+              className="text-primary-foreground hover:text-accent-foreground hover:bg-accent"
             >
               <Link href="/login">Log in</Link>
             </Button>
@@ -69,7 +69,7 @@ export function Navbar() {
               asChild
               variant="ghost"
               size="sm"
-              className="text-secondary hover:text-white hover:bg-accent px-2"
+              className="text-primary-foreground hover:text-accent-foreground hover:bg-accent px-2"
             >
               <Link href="/login">Log in</Link>
             </Button>
@@ -81,13 +81,13 @@ export function Navbar() {
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="md:hidden text-secondary hover:text-white hover:bg-accent shrink-0"
+                className="md:hidden text-primary-foreground hover:text-accent-foreground hover:bg-accent shrink-0"
                 aria-label="Open menu"
               >
                 <Menu className="h-5 w-5" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="right" className="w-[min(100vw,20rem)] bg-primary text-primary-foreground border-white/10 [&_button[data-slot=sheet-close]]:text-secondary">
+            <SheetContent side="right" className="w-[min(100vw,20rem)] bg-primary text-primary-foreground border-white/10 [&_button[data-slot=sheet-close]]:text-primary-foreground">
               <SheetHeader className="text-left border-b border-white/10 pb-4">
                 <SheetTitle className="text-white font-heading">Menu</SheetTitle>
               </SheetHeader>
@@ -97,7 +97,7 @@ export function Navbar() {
                     key={href}
                     href={href}
                     onClick={() => setOpen(false)}
-                    className="rounded-lg px-3 py-3 text-base text-secondary hover:bg-white/10 hover:text-white transition-colors"
+                    className="rounded-lg px-3 py-3 text-base text-primary-foreground hover:bg-white/10 hover:text-white transition-colors"
                   >
                     {label}
                   </Link>
@@ -105,7 +105,7 @@ export function Navbar() {
                 <Link
                   href="/login"
                   onClick={() => setOpen(false)}
-                  className="rounded-lg px-3 py-3 text-base font-semibold text-white bg-accent/80 hover:bg-accent mt-2 text-center"
+                  className="rounded-lg px-3 py-3 text-base font-semibold text-primary bg-secondary hover:bg-secondary/90 mt-2 text-center"
                 >
                   Get Started
                 </Link>

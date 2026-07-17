@@ -21,7 +21,7 @@ export function Hero() {
         {/* Left — copy */}
         <div className="flex-1 flex flex-col gap-5 sm:gap-7 min-w-0">
           <HeroEntrance delay={0}>
-            <Badge className="w-fit bg-accent text-secondary border-0 rounded-full px-4 py-1 text-xs font-medium">
+            <Badge className="w-fit bg-accent text-accent-foreground border-0 rounded-full px-4 py-1 text-xs font-medium">
               Now live across Bangladesh
             </Badge>
           </HeroEntrance>
@@ -33,7 +33,7 @@ export function Hero() {
           </HeroEntrance>
 
           <HeroEntrance delay={0.2}>
-            <p className="text-secondary/90 text-base sm:text-lg leading-relaxed max-w-md">
+            <p className="text-primary-foreground/90 text-base sm:text-lg leading-relaxed max-w-md">
               Find nearby masjids, check prayer times, and stay connected with
               your community — all from one platform.
             </p>
@@ -51,7 +51,7 @@ export function Hero() {
               asChild
               variant="outline"
               size="lg"
-              className="border-secondary/50 text-secondary bg-transparent hover:bg-accent hover:text-white hover:border-accent px-6 sm:px-8 w-full sm:w-auto justify-center"
+              className="border-primary-foreground/50 text-primary-foreground bg-transparent hover:bg-accent hover:text-accent-foreground hover:border-accent px-6 sm:px-8 w-full sm:w-auto justify-center"
             >
               <Link href="/login">Admin Panel →</Link>
             </Button>
@@ -60,7 +60,7 @@ export function Hero() {
 
         {/* Right — masjid preview card */}
         <HeroCardEntrance className="hidden lg:flex flex-col gap-4 w-[420px] shrink-0 bg-accent rounded-2xl p-6">
-          <p className="text-xs font-semibold text-secondary/70 uppercase tracking-wide">
+          <p className="text-xs font-semibold text-accent-foreground/70 uppercase tracking-wide">
             Nearest Masjid · 0.4 km away
           </p>
 
@@ -70,19 +70,19 @@ export function Hero() {
                 Baitul Mukarram National Mosque
               </p>
               <div className="flex items-center gap-1.5 mt-1">
-                <MapPin className="h-3.5 w-3.5 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground">
+                <MapPin className="h-3.5 w-3.5 text-primary-foreground/70" />
+                <p className="text-xs text-primary-foreground/70">
                   Topkhana Rd, Dhaka 1000
                 </p>
               </div>
             </div>
 
             <div className="flex gap-2">
-              <span className="inline-flex items-center gap-1 text-xs bg-accent text-secondary rounded-full px-2.5 py-1">
+              <span className="inline-flex items-center gap-1 text-xs bg-accent text-accent-foreground rounded-full px-2.5 py-1">
                 <BadgeCheck className="h-3 w-3" />
                 Verified
               </span>
-              <span className="text-xs bg-accent text-secondary rounded-full px-2.5 py-1">
+              <span className="text-xs bg-accent text-accent-foreground rounded-full px-2.5 py-1">
                 Sisters Section
               </span>
             </div>
@@ -90,8 +90,8 @@ export function Hero() {
             <div className="grid grid-cols-5 gap-1 pt-1 border-t border-white/10">
               {PRAYER_TIMES.map(({ name, time }) => (
                 <div key={name} className="flex flex-col items-center gap-1">
-                  <span className="text-[10px] text-muted-foreground">{name}</span>
-                  <span className="text-sm font-bold text-secondary font-mono">
+                  <span className="text-[10px] text-primary-foreground/70">{name}</span>
+                  <span className="text-sm font-bold text-primary-foreground font-mono">
                     {time}
                   </span>
                 </div>
@@ -111,7 +111,7 @@ export function Hero() {
                 <span className="font-heading font-bold text-xl text-white font-mono">
                   {num}
                 </span>
-                <span className="text-xs text-muted-foreground">{label}</span>
+                <span className="text-xs text-primary-foreground/70">{label}</span>
               </div>
             ))}
           </div>

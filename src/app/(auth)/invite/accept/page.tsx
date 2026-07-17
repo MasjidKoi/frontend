@@ -107,7 +107,7 @@ function InviteAcceptInner() {
           </div>
           <Link
             href="/login"
-            className="text-sm text-accent hover:underline"
+            className="text-sm text-primary hover:underline"
           >
             ← Back to login
           </Link>
@@ -122,11 +122,11 @@ function InviteAcceptInner() {
         {/* Header */}
         <div className="bg-primary px-9 py-8 flex flex-col items-center gap-3">
           <div className="h-13 w-13 rounded-2xl bg-accent flex items-center justify-center">
-            <KeyRound className="h-6 w-6 text-secondary" />
+            <KeyRound className="h-6 w-6 text-accent-foreground" />
           </div>
           <div className="flex flex-col items-center gap-1.5 text-center">
             <h1 className="font-heading text-xl font-bold text-white">Set your password</h1>
-            <p className="text-sm text-secondary/80 leading-relaxed max-w-xs">
+            <p className="text-sm text-primary-foreground/80 leading-relaxed max-w-xs">
               You&apos;ve been invited as a platform admin. Set a password to activate your account.
             </p>
           </div>
@@ -203,7 +203,7 @@ function InviteAcceptInner() {
 
           <p className="mt-5 text-center text-xs text-muted-foreground">
             Already have an account?{" "}
-            <Link href="/login" className="text-accent hover:underline">
+            <Link href="/login" className="text-primary hover:underline">
               Log in
             </Link>
           </p>

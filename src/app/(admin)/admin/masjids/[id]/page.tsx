@@ -376,14 +376,14 @@ export default function MasjidDetailPage() {
               </span>
               {masjid.verified && (
                 <div className="flex items-center gap-1.5 bg-accent rounded-full px-2.5 py-1">
-                  <BadgeCheck className="h-3.5 w-3.5 text-secondary" />
-                  <span className="text-xs text-secondary font-medium">Verified</span>
+                  <BadgeCheck className="h-3.5 w-3.5 text-accent-foreground" />
+                  <span className="text-xs text-accent-foreground font-medium">Verified</span>
                 </div>
               )}
             </div>
 
             {masjid.suspension_reason && (
-              <p className="text-xs text-white/60 bg-white/10 rounded-lg p-2.5">{masjid.suspension_reason}</p>
+              <p className="text-xs text-white/70 bg-white/10 rounded-lg p-2.5">{masjid.suspension_reason}</p>
             )}
 
             <div className="flex flex-col gap-2">

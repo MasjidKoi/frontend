@@ -104,10 +104,10 @@ export default function PublicMasjidPage() {
       <header className="bg-primary">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-3">
           <Link href="/" className="flex items-center gap-2 text-white">
-            <div className="h-7 w-7 rounded-lg bg-accent flex items-center justify-center text-base font-bold">م</div>
+            <div className="h-7 w-7 rounded-lg bg-accent text-accent-foreground flex items-center justify-center text-base font-bold">م</div>
             <span className="font-heading font-bold">MasjidKoi</span>
           </Link>
-          <Link href="/" className="flex items-center gap-1.5 text-sm text-secondary/70 hover:text-white transition-colors">
+          <Link href="/" className="flex items-center gap-1.5 text-sm text-primary-foreground/70 hover:text-white transition-colors">
             <ArrowLeft className="h-4 w-4" /> Back
           </Link>
         </div>
@@ -119,7 +119,7 @@ export default function PublicMasjidPage() {
           <div className="flex items-center gap-2.5 flex-wrap">
             <h1 className="font-heading text-3xl font-bold text-foreground">{masjid.name}</h1>
             {masjid.verified && (
-              <div className="flex items-center gap-1 bg-accent/10 text-accent rounded-full px-2.5 py-1">
+              <div className="flex items-center gap-1 bg-accent/10 text-primary rounded-full px-2.5 py-1">
                 <BadgeCheck className="h-4 w-4" />
                 <span className="text-xs font-medium">Verified</span>
               </div>
@@ -149,7 +149,7 @@ export default function PublicMasjidPage() {
         <div className="bg-card rounded-2xl shadow-sm border border-border/30 overflow-hidden">
           <div className="bg-primary px-5 py-4">
             <p className="font-heading font-bold text-white text-base">Prayer Times</p>
-            {pt && <p className="text-xs text-secondary/70 mt-0.5">
+            {pt && <p className="text-xs text-primary-foreground/70 mt-0.5">
               {new Date(pt.date).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" })}
             </p>}
           </div>
@@ -202,7 +202,7 @@ export default function PublicMasjidPage() {
               {masjid.contact?.phone && <span>📞 {masjid.contact.phone}</span>}
               {masjid.contact?.email && <span>✉️ {masjid.contact.email}</span>}
               {masjid.contact?.website_url && (
-                <a href={masjid.contact.website_url} target="_blank" rel="noopener noreferrer" className="text-accent hover:underline">
+                <a href={masjid.contact.website_url} target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
                   🌐 {masjid.contact.website_url}
                 </a>
               )}

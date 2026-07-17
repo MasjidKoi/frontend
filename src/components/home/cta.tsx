@@ -12,7 +12,7 @@ export function CtaSection() {
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-white leading-tight px-1">
             Ready to connect your community?
           </h2>
-          <p className="text-secondary/80 text-base leading-relaxed max-w-md">
+          <p className="text-primary-foreground/80 text-base leading-relaxed max-w-md">
             Register your masjid today and help thousands of worshippers find you.
           </p>
         </FadeUp>
@@ -29,7 +29,7 @@ export function CtaSection() {
             asChild
             variant="outline"
             size="lg"
-            className="border-secondary/40 text-secondary bg-transparent hover:bg-accent hover:border-accent hover:text-white px-6 sm:px-8 w-full sm:w-auto justify-center"
+            className="border-primary-foreground/40 text-primary-foreground bg-transparent hover:bg-accent hover:border-accent hover:text-accent-foreground px-6 sm:px-8 w-full sm:w-auto justify-center"
           >
             <Link href="/masjids">Explore Masjids</Link>
           </Button>

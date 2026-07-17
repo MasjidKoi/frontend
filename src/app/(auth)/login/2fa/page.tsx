@@ -77,13 +77,13 @@ export default function TwoFactorPage() {
         {/* Header */}
         <div className="bg-primary px-9 py-8 flex flex-col items-center gap-4">
           <div className="h-14 w-14 rounded-2xl bg-accent flex items-center justify-center">
-            <ShieldCheck className="h-7 w-7 text-secondary" />
+            <ShieldCheck className="h-7 w-7 text-accent-foreground" />
           </div>
           <div className="flex flex-col items-center gap-2 text-center">
             <h1 className="font-heading text-xl font-bold text-white">
               Two-Factor Authentication
             </h1>
-            <p className="text-sm text-secondary/80 leading-relaxed max-w-xs">
+            <p className="text-sm text-primary-foreground/80 leading-relaxed max-w-xs">
               Enter the 6-digit code from your authenticator app to complete sign in.
             </p>
           </div>

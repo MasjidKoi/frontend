@@ -30,7 +30,7 @@ export function HowItWorks() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 md:px-8 flex flex-col items-center gap-10 md:gap-14">
         {/* Header */}
         <FadeUp className="flex flex-col items-center gap-3 text-center">
-          <span className="text-xs font-semibold text-accent tracking-[0.15em] uppercase">
+          <span className="text-xs font-semibold text-primary tracking-[0.15em] uppercase">
             How it works
           </span>
           <h2 className="font-heading text-2xl sm:text-3xl md:text-4xl font-bold text-foreground max-w-md leading-tight">
@@ -45,7 +45,7 @@ export function HowItWorks() {
           {STEPS.map(({ num, title, description }) => (
             <StaggerItem key={num}>
               <div className="bg-card rounded-2xl p-5 sm:p-7 flex flex-col gap-3 shadow-sm h-full">
-                <span className="font-mono font-bold text-4xl text-accent">
+                <span className="font-mono font-bold text-4xl text-primary">
                   {num}
                 </span>
                 <h3 className="font-heading text-base font-bold text-foreground">
