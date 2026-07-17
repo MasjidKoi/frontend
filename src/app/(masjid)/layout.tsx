@@ -56,7 +56,7 @@ function MasjidNavLinks({
             className={cn(
               "flex items-center gap-2.5 px-3 h-10 rounded-lg text-sm transition-colors",
               active
-                ? "bg-accent text-white font-medium"
+                ? "bg-accent text-accent-foreground font-medium"
                 : "text-white/60 hover:text-white hover:bg-white/10",
             )}
           >

@@ -39,7 +39,7 @@ export default function AnalyticsPage() {
   }, [period]);
 
   useEffect(() => {
-    adminApi.listAppUsers({ page_size: 1000 })
+    adminApi.listAppUsers({ page_size: 100 })
       .then(res => setDemoUsers(res.items ?? []))
       .catch(() => toast.error("Failed to load demographics"))
       .finally(() => setDemoLoading(false));
