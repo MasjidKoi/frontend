@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { Star } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import { masjidsApi, type MasjidPhoto } from "@/lib/api/masjids";
 import { toast } from "sonner";
 
@@ -43,7 +44,7 @@ export default function AdminMasjidPhotosPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {photos.map(p => (
             <div key={p.photo_id} className="relative group rounded-xl overflow-hidden border border-border/30 shadow-sm aspect-square bg-muted">
-              <img src={p.url} alt="Masjid photo" className="w-full h-full object-cover" />
+              <ImageWithFallback src={p.url} alt="Masjid photo" className="w-full h-full object-cover" />
               {p.is_cover && (
                 <div className="absolute top-2 left-2 flex items-center gap-1 bg-accent-gold text-white text-xs px-2 py-1 rounded-full">
                   <Star className="h-3 w-3 fill-white" /> Cover

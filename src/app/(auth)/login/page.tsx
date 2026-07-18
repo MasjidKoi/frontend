@@ -41,6 +41,16 @@ function LoginForm() {
 
       const user = useAuthStore.getState().user!;
 
+      // This is the admin panel — only platform_admin and masjid_admin have a
+      // dashboard here. Any other role (app_user, madrasha_admin) authenticates
+      // fine at the API but has nowhere to go, so tell them plainly and drop the
+      // session instead of pushing them into a route that bounces to /login.
+      if (user.role !== "platform_admin" && user.role !== "masjid_admin") {
+        useAuthStore.getState().clearAuth();
+        toast.error("This account doesn't have access to the admin panel.");
+        return;
+      }
+
       // Only honor a same-origin relative path — reject absolute URLs and
       // protocol-relative values to prevent an open-redirect via
       // ?redirectTo=https://evil.example.com after a legitimate login.

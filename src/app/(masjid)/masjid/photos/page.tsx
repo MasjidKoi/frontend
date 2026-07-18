@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { Upload, Trash2, Star, ChevronUp, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
+import { ImageWithFallback } from "@/components/ui/image-with-fallback";
 import { Button } from "@/components/ui/button";
 import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
@@ -134,8 +135,7 @@ export default function PhotosPage() {
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
           {photos.map((photo, index) => (
             <div key={photo.photo_id} className="group relative rounded-xl overflow-hidden border border-border/30 shadow-sm bg-card">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <ImageWithFallback
                 src={photo.url}
                 alt={`Masjid photo ${index + 1}`}
                 className="w-full aspect-video object-cover"

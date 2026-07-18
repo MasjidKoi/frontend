@@ -82,11 +82,18 @@ export function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/login", request.url));
     }
 
-    // ── /login while already authenticated → redirect to dashboard ─────────
-    // Check any valid token (aal1 or aal2) since TOTP is currently disabled
+    // ── /login while already authenticated → redirect to the right dashboard ─
+    // Only roles that actually have a dashboard are redirected. Other roles
+    // (app_user, madrasha_admin) fall through and stay on /login — redirecting
+    // them to a protected route would just bounce straight back here, an
+    // infinite loop. The login page itself surfaces a "no admin access" message.
     if (pathname === "/login") {
-      const dest = role === "platform_admin" ? "/admin" : "/masjid/profile";
-      return NextResponse.redirect(new URL(dest, request.url));
+      if (role === "platform_admin") {
+        return NextResponse.redirect(new URL("/admin", request.url));
+      }
+      if (role === "masjid_admin") {
+        return NextResponse.redirect(new URL("/masjid/profile", request.url));
+      }
     }
   }
 
